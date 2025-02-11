@@ -2,8 +2,21 @@
 
 import { motion } from "framer-motion";
 import { BrainCircuit, CalendarSync, MonitorCog, Terminal } from "lucide-react";
+import { useEffect } from "react";
+import { useLoading } from "@/context/LoadingContext";
 
 const Hero = () => {
+  const { setIsLoading } = useLoading();
+
+  useEffect(() => {
+    // Set loading to false when Hero component mounts and is ready
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000); // Give some time for assets to load
+
+    return () => clearTimeout(timer);
+  }, [setIsLoading]);
+
   const containerVariants = {
     hidden: { opacity: 0 },
     show: {
