@@ -67,23 +67,21 @@ body {
 }
 
 .animate-svg {
-  stroke-dasharray: 1000;
-  stroke-dashoffset: 1000;
-  animation: draw 4s ease-in-out infinite alternate;
+  --path-length: 0;
 }
 
 .animate-path {
-  stroke-dasharray: 1000;
-  stroke-dashoffset: 1000;
-  animation: draw 4s ease-in-out infinite alternate;
+  stroke-dasharray: var(--path-length);
+  stroke-dashoffset: var(--path-length);
+  animation: draw 3s ease-in-out infinite alternate;
 }
 
 @keyframes draw {
-  from {
-    stroke-dashoffset: 1000;
+  0% {
+    stroke-dashoffset: var(--path-length);
   }
-  to {
+  100% {
     stroke-dashoffset: 0;
   }
 }
-
+  

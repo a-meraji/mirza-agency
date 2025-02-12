@@ -2,22 +2,21 @@ export const processes = [
     {
       title: "رزرو وقت مشاوره",
       description: "بابررسی نیازمندی ها و اهداف شما کار را آغاز می کنیم. نتیجه این نشست ارائه یک برنامه جامع و راهبردی برای توسعه پروژه شما می باشد.",
-
-      link: "https://www.ignant.com/2023/03/25/ad2186-matthias-leidingers-photographic-exploration-of-awe-and-wonder/",
-      color: "#ffa62022"
+    color: "#ffa62044"
     },
     {
-      title: "Clément Chapillon",
-      description: "This is a story on the border between reality and imaginary, about the contradictory feelings that the insularity of a rocky, arid, and wild territory provokes”—so French photographer Clément Chapillon describes his latest highly captivating project Les rochers fauves (French for ‘The tawny rocks’).",
-
-      link: "https://www.ignant.com/2022/09/30/clement-chapillon-questions-geographical-and-mental-isolation-with-les-rochers-fauves/",
-      color: "#ffa62099"
+      title: "طراحی و توسعه",
+      description: "بر اساس برنامه راهبردی آماده شده در جلسه مشاوره طراحی فروشگاه رو آغاز میکنیم. سپس چند طرح اولیه ارائه می دهیم و طرح های مورد تائید شما را برای توسعه پروژه به کار می بریم. ما گام به گام با شما ایده های تان را اجرایی میکنیم",
+       color: "#ffa62066"
     },
     {
-      title: "Zissou",
-      description: "Though he views photography as a medium for storytelling, Zissou’s images don’t insist on a narrative. Both crisp and ethereal, they’re encoded with an ambiguity—a certain tension—that lets the viewer find their own story within them.",
-
-      link: "https://www.ignant.com/2023/10/28/capturing-balis-many-faces-zissou-documents-the-sacred-and-the-mundane-of-a-fragile-island/",
-      color: "#C2491D99"
-    }
+      title: "بررسی و کنترل کیفی",
+      description: "سایت شما از نظر کارکرد، سرعت و امنیت بررسی و اشکال زدایی میشود. پس از آن جهت کسب تائید نهایی شما، ویرایش های جزئی صورت می گیرد.",
+       color: "#C2491D66"
+    },
+    {
+        title: "راه اندازی و پشتیبانی فنی",
+        description:"پروژه شما را بر روی وب  راه اندازی می کنیم و مطمئن می شویم که پروژه شما همیشه در سلامت و بهترین عملکرد خود بماند. مفتخریم که تا انتها در کنار شما هستیم. ",
+          color: "#b8181955"
+      }
   ]

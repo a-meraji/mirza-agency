@@ -307,9 +307,9 @@ const Services = () => {
           transition={{ duration: 0.8 }}
           className="text-center"
         >
-          <h1 className="text-4xl lg:text-5xl font-bold text-iconic titr">
+          <h6 id="services" className="text-4xl lg:text-5xl font-bold text-iconic titr">
             خدمات میرزا
-          </h1>
+          </h6>
         </motion.div>
 
         <div className="mb-16 lg:mb-24">
