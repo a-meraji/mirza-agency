@@ -1,3 +1,5 @@
+import { BotMessageSquare, CalendarSync, MonitorCog, PencilRuler } from "lucide-react";
+
 export const processes = [
     {
       title: "رزرو وقت مشاوره",
@@ -20,3 +22,30 @@ export const processes = [
           color: "#b8181955"
       }
   ]
+
+  export  const services = [
+    {
+      id: "web-development",
+      title: "طراحی و توسعه",
+      icon: PencilRuler,
+      text: "طراحی و توسعه"
+    },
+    {
+      id: "ai-solutions",
+      title: "متصل به هوش مصنوعی",
+      icon: BotMessageSquare,
+      text: "متصل به هوش مصنوعی"
+    },
+    {
+      id: "ui-design",
+      title: "اتوماسیون",
+      icon: CalendarSync,
+      text: "اتوماسیون"
+    },
+    {
+      id: "tech-support",
+      title: "پشتیبانی فنی",
+      icon: MonitorCog,
+      text: "پشتیبانی فنی"
+    }
+  ];

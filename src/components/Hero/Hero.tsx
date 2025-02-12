@@ -1,9 +1,11 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { BrainCircuit, CalendarSync, MonitorCog, Terminal } from "lucide-react";
+
 import { useEffect } from "react";
 import { useLoading } from "@/context/LoadingContext";
+import { scrollToSection } from "@/utils/scroll";
+import { services } from "@/lib/data";
 
 const Hero = () => {
   const { setIsLoading } = useLoading();
@@ -91,12 +93,7 @@ const Hero = () => {
     },
   };
 
-  const services = [
-    { icon: Terminal, text: "طراحی و توسعه" },
-    { icon: CalendarSync, text: "اتوماسیون" },
-    { icon: BrainCircuit, text: "متصل به هوش مصنوعی" },
-    { icon: MonitorCog, text: "پشتیبانی فنی" },
-  ];
+
 
   return (
     <motion.section
@@ -124,25 +121,32 @@ const Hero = () => {
         </motion.p>
       </motion.div>
 
-      <motion.a
-        href="#services"
+      <motion.button
         variants={buttonVariants}
         whileHover="hover"
         whileTap="tap"
+        onClick={(e) => {
+          e.preventDefault();
+          scrollToSection('services');
+        }}
         className="mt-10 px-8 py-2 border-2 border-iconic2 text-iconic2 bg-[#f3e0cc] rounded-full text-2xl hover:bg-iconic2 hover:text-background transition-colors duration-500"
       >
         خدمات میرزا
-      </motion.a>
+      </motion.button>
 
       <motion.div 
         variants={containerVariants}
         className="grid grid-cols-2 justify-center items-center md:grid-cols-4 gap-4 mt-20"
       >
-        {services.map((service, i) => (
+        {services.map((service) => (
           <motion.div
-            key={i}
-            custom={i}
+            key={service.id}
+            custom={service.id}
             variants={cardVariants}
+            onClick={(e) => {
+              e.preventDefault();
+              scrollToSection(service.id);
+            }}
             whileHover="hover"
             className="flex flex-col justify-center items-center gap-y-2 p-5 rounded-md bg-[#e9aa804b]"
             style={{

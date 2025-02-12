@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import localFont from "next/font/local";
-import Navbar from "@/components/UI/Navbar";
+import Navbar from "@/components/Nabar/Navbar";
 import ContactUs from "@/components/UI/ContactUs";
 import Loader from "@/components/UI/Loader";
 import { LoadingProvider } from "@/context/LoadingContext";

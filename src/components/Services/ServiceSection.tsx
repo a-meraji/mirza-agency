@@ -9,6 +9,7 @@ import { Button } from "../ui/button";
 import { ChevronLeft } from "lucide-react";
 
 interface ServiceSectionProps {
+  id: string;
   title: string;
   description: string;
   modalTitle?: string;
@@ -19,6 +20,7 @@ interface ServiceSectionProps {
 }
 
 const ServiceSection = ({
+  id,
   title,
   description,
   modalTitle,
@@ -40,6 +42,7 @@ const ServiceSection = ({
       </Modal>
 
       <motion.div
+        id={id}
         initial="hidden"
         whileInView="show"
         viewport={{ once: true, amount: 0.25 }}

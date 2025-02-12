@@ -1,8 +1,7 @@
 'use client'
 import { useEffect, useRef } from 'react';
-import Image from 'next/image';
 
-const Card = ({title, description, url, color, i}: {title: string, description: string, src: string, url: string, color: string, i: number}) => {
+const Card = ({title, description, color, i}: {title: string, description: string, color: string, i: number}) => {
   const svgRef = useRef<SVGSVGElement>(null);
 
   useEffect(() => {

@@ -147,7 +147,7 @@ const AutomationIcon = () => (
         strokeLinejoin="round"
       >
         <motion.path
-          d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"
+          d="M11 10v4h4"
           style={{
             pathLength: useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 1]),
             opacity: useTransform(
@@ -158,7 +158,7 @@ const AutomationIcon = () => (
           }}
         />
         <motion.path
-          d="M21 3v5h-5"
+          d="m11 14 1.535-1.605a5 5 0 0 1 8 1.5"
           style={{
             pathLength: useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 1]),
             opacity: useTransform(
@@ -169,7 +169,7 @@ const AutomationIcon = () => (
           }}
         />
         <motion.path
-          d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"
+          d="M16 2v4"
           style={{
             pathLength: useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 1]),
             opacity: useTransform(
@@ -180,7 +180,51 @@ const AutomationIcon = () => (
           }}
         />
         <motion.path
-          d="M8 16H3v5"
+          d="m21 18-1.535 1.605a5 5 0 0 1-8-1.5"
+          style={{
+            pathLength: useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 1]),
+            opacity: useTransform(
+              scrollYProgress,
+              [0, 0.2, 0.8, 1],
+              [0, 1, 1, 0]
+            ),
+          }}
+        />
+        <motion.path
+          d="M21 22v-4h-4"
+          style={{
+            pathLength: useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 1]),
+            opacity: useTransform(
+              scrollYProgress,
+              [0, 0.2, 0.8, 1],
+              [0, 1, 1, 0]
+            ),
+          }}
+        />
+        <motion.path
+          d="M21 8.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h4.3"
+          style={{
+            pathLength: useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 1]),
+            opacity: useTransform(
+              scrollYProgress,
+              [0, 0.2, 0.8, 1],
+              [0, 1, 1, 0]
+            ),
+          }}
+        />
+        <motion.path
+          d="M3 10h4"
+          style={{
+            pathLength: useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 1]),
+            opacity: useTransform(
+              scrollYProgress,
+              [0, 0.2, 0.8, 1],
+              [0, 1, 1, 0]
+            ),
+          }}
+        />
+        <motion.path
+          d="M8 2v4"
           style={{
             pathLength: useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 1]),
             opacity: useTransform(
@@ -212,33 +256,77 @@ const SupportIcon = () => (
           d="M12 17v4"
           style={{
             pathLength: useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 1]),
-            opacity: useTransform(
-              scrollYProgress,
-              [0, 0.2, 0.8, 1],
-              [0, 1, 1, 0]
-            ),
+            opacity: useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]),
+          }}
+        />
+        <motion.path
+          d="m15.2 4.9-.9-.4"
+          style={{
+            pathLength: useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 1]),
+            opacity: useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]),
+          }}
+        />
+        <motion.path
+          d="m15.2 7.1-.9.4"
+          style={{
+            pathLength: useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 1]),
+            opacity: useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]),
+          }}
+        />
+        <motion.path
+          d="m16.9 3.2-.4-.9"
+          style={{
+            pathLength: useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 1]),
+            opacity: useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]),
+          }}
+        />
+        <motion.path
+          d="m16.9 8.8-.4.9"
+          style={{
+            pathLength: useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 1]),
+            opacity: useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]),
+          }}
+        />
+        <motion.path
+          d="m19.5 2.3-.4.9"
+          style={{
+            pathLength: useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 1]),
+            opacity: useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]),
+          }}
+        />
+        <motion.path
+          d="m19.5 9.7-.4-.9"
+          style={{
+            pathLength: useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 1]),
+            opacity: useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]),
+          }}
+        />
+        <motion.path
+          d="m21.7 4.5-.9.4"
+          style={{
+            pathLength: useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 1]),
+            opacity: useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]),
+          }}
+        />
+        <motion.path
+          d="m21.7 7.5-.9-.4"
+          style={{
+            pathLength: useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 1]),
+            opacity: useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]),
           }}
         />
         <motion.path
           d="M22 13v2a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7"
           style={{
             pathLength: useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 1]),
-            opacity: useTransform(
-              scrollYProgress,
-              [0, 0.2, 0.8, 1],
-              [0, 1, 1, 0]
-            ),
+            opacity: useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]),
           }}
         />
         <motion.path
           d="M8 21h8"
           style={{
             pathLength: useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 1]),
-            opacity: useTransform(
-              scrollYProgress,
-              [0, 0.2, 0.8, 1],
-              [0, 1, 1, 0]
-            ),
+            opacity: useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]),
           }}
         />
         <motion.circle
@@ -247,11 +335,7 @@ const SupportIcon = () => (
           r="3"
           style={{
             pathLength: useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 1]),
-            opacity: useTransform(
-              scrollYProgress,
-              [0, 0.2, 0.8, 1],
-              [0, 1, 1, 0]
-            ),
+            opacity: useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]),
           }}
         />
       </motion.svg>
@@ -261,6 +345,7 @@ const SupportIcon = () => (
 
 const servicesData = [
   {
+    id: "web-development",
     title: "طراحی و توسعه",
     description: `صفر تا صد طراحی تا راه‌اندازی فروشگاه شما. مطمئن می‌شویم که فروشگاه شما کاربرپسند، سریع و امن باشد. هدف  حفظ و افزایش فروش است`,
     modalTitle:
@@ -269,6 +354,7 @@ const servicesData = [
     icon: <DesignIcon />,
   },
   {
+    id: "ai-solutions",
     title: "پشتیبانی هوش مصنوعی",
     description: `پشتیبانی امور مشتریان شما و تعامل با بازدید کنندگان فروشگاه تان با استفاده از هوش مصنوعی تمام خودکار در 24 ساعت شبانه روز. افزایش فروش و نرخ نگهداشت مشتری، به همراه کاهش هزینه در استخدام پشتیبان`,
     modalTitle: "وقت شما گرانبها است، همین طور وقت مشرتیانتان",
@@ -278,6 +364,7 @@ const servicesData = [
     icon: <AIIcon />,
   },
   {
+    id: "ui-design",
     title: "اتوماسیون و مدیریت",
     description: `پشت پرده سایت شما بایستی منظم و تحت مدیریت باشد. ارائه سیستم های مدیریت محصولات، سفارشات، گزارش مالی، عملکرد و فروش`,
     modalTitle: "مدیریت یک فروشگاه اینترنتی چالش برانگیز است",
@@ -289,6 +376,7 @@ const servicesData = [
     icon: <AutomationIcon />,
   },
   {
+    id: "tech-support",
     title: "پشتیبانی فنی",
     description:
       "با خدمات پشتیبانی فنی قابل اعتماد ما، آرامش خاطر داشته باشید. تیم متخصص ما همیشه آماده است تا به شما در نگهداری، عیب یابی و بهینه سازی سیستم هایتان کمک کند و در جالش های روبه رو و توسعه های بیشتر شما را همراهی کند.",
@@ -315,8 +403,13 @@ const Services = () => {
         <div className="mb-16 lg:mb-24">
           {servicesData.map((service, index) => (
             <ServiceSection
-              key={service.title}
-              {...service}
+              key={service.id}
+              id={service.id}
+              title={service.title}
+              description={service.description}
+              modalTitle={service.modalTitle}
+              modalDescription={service.modalDescription}
+              icon={service.icon}
               index={index}
               isReversed={index % 2 === 1}
             />
