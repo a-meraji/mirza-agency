@@ -103,7 +103,7 @@ export default function ContactUs() {
     <Drawer>
       <DrawerTrigger asChild>
         <Button
-          className="fixed bottom-[8vh] transform -translate-x-1/2 left-1/2
+          className="fixed bottom-[5vh] transform -translate-x-1/2 left-1/2
 bg-[#fbeee0]
 border-2
 border-[#422800]
@@ -124,7 +124,7 @@ active:translate-y-[2px]
 md:min-w-[120px]
 md:px-[25px]"
         >
-          تماس با ما
+          رزرو وقت
         </Button>
       </DrawerTrigger>
       <DrawerContent className="backdrop-blur-md bg-white/90">

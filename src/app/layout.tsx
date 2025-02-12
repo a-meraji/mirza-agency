@@ -5,6 +5,7 @@ import Navbar from "@/components/UI/Navbar";
 import ContactUs from "@/components/UI/ContactUs";
 import Loader from "@/components/UI/Loader";
 import { LoadingProvider } from "@/context/LoadingContext";
+import SmoothScroll from "@/components/SmoothScroll";
 
 const IRANSansWeb = localFont({
   src: [
@@ -69,9 +70,10 @@ export default function RootLayout({
       >
 
         <Loader />
-        <div className="bg-[#ffe8d3] -z-10 bg-grid-black/[0.2] fixed top-0 bottom-0 left-0 right-0 h-screen flex items-center justify-center">
+        <div className="bg-[#fce0c5] -z-10 bg-grid-black/[0.2] fixed top-0 bottom-0 left-0 right-0 h-screen flex items-center justify-center">
           <div className="absolute pointer-events-none inset-0 flex items-center justify-center bg-white [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]"></div>
         </div>
+        <SmoothScroll/>
         <Navbar />
         {children}
         <ContactUs />

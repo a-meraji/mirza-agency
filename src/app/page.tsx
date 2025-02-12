@@ -1,11 +1,14 @@
-import Hero from '@/components/Hero';
-import Services from '@/components/Services/Services';
+import Hero from "@/components/Hero/Hero";
+import Process from "@/components/Process/Process";
+import Services from "@/components/Services/Services";
 
 export default function Home() {
+
   return (
-    <main className=''>
+    <main className="relative">
       <Hero />
       <Services />
+      <Process />
     </main>
   );
 }

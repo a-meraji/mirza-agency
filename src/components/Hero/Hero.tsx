@@ -144,12 +144,12 @@ const Hero = () => {
             custom={i}
             variants={cardVariants}
             whileHover="hover"
-            className="flex flex-col justify-center items-center gap-y-2 p-5 rounded-md bg-[#e9aa804b] backdrop-blur-sm"
+            className="flex flex-col justify-center items-center gap-y-2 p-5 rounded-md bg-[#e9aa804b]"
             style={{
               boxShadow: '0 4px 12px rgba(233, 170, 128, 0.2)',
             }}
           >
-            {<service.icon className="w-10 h-10" />}
+            {<service.icon className="w-10 h-10 text-iconic2" />}
             <span>{service.text}</span>
           </motion.div>
         ))}
