@@ -1,7 +1,6 @@
 "use client";
 import Image from "next/image";
 import React, { useState, useEffect } from "react";
-import styles from './style.module.css';
 import { AnimatePresence} from "framer-motion";
 import Bar from "./Bar";
 function Navbar() {
@@ -35,18 +34,25 @@ function Navbar() {
         />
         آژانس توسعه میرزا
       </div>
-      <div onClick={() => {setIsActive(!isActive)}} className={styles.el}>
-
-<div className={`${styles.burger} ${isActive ? styles.burgerActive : ""} text-iconic`}></div>
-<div className="absolute top-0">
-
-<AnimatePresence mode="wait">
-
-                {isActive && <Bar/>}
-
-            </AnimatePresence>
-</div>
-</div>
+      <div 
+        onClick={() => {setIsActive(!isActive)}} 
+        className="cursor-pointer flex items-center justify-center"
+      >
+        <div className={`
+          w-[22.5px] relative pointer-events-none
+          before:content-[''] before:h-[1px] before:w-full before:bg-[#ffa620] before:relative before:block before:transition-all before:duration-[1500ms] before:ease-[cubic-bezier(0.76,0,0.24,1)] before:top-[4px]
+          after:content-[''] after:h-[1px] after:w-full after:bg-[#ffa620] after:relative after:block after:transition-all after:duration-[1500ms] after:ease-[cubic-bezier(0.76,0,0.24,1)] after:top-[-4px]
+          ${isActive ? 
+            'before:rotate-[-45deg] before:top-[2px] after:rotate-[45deg] after:-top-[1px]' : 
+            ''
+          }
+        `}></div>
+        <div className="absolute top-0 left-0 right-0 w-screen">
+          <AnimatePresence mode="wait">
+            {isActive && <Bar/>}
+          </AnimatePresence>
+        </div>
+      </div>
     </nav>
   );
 }
