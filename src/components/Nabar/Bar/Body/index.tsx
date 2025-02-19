@@ -2,7 +2,8 @@ import React from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { blur } from "../../anim";
-import { ListOrdered } from "lucide-react";
+import { ListOrdered, LucideIcon } from "lucide-react";
+
 export default function Body({
   links,
   selectedLink,
@@ -11,7 +12,7 @@ export default function Body({
   links: Array<{
     title: string;
     id: string;
-    icon: React.ReactNode;
+    icon: LucideIcon;
     text: string;
   }>;
   selectedLink: { isActive: boolean; index: number };
@@ -20,7 +21,7 @@ export default function Body({
   return (
     <div className="my-10 lg:my-20 bg-[#462d22b4] backdrop-blur-[10px] rounded-[10px] p-[10px] w-full h-full">
       {links.map((link, index) => {
-        const { id, icon, text } = link;
+        const { id, text } = link;
         return (
           <Link
             key={`l_${index}`}
@@ -41,7 +42,7 @@ export default function Body({
                   : "closed"
               }
             >
-              <link.icon className="w-10 h-10" />
+              {React.createElement(link.icon, { className: "w-10 h-10" })}
             </motion.span>
             <motion.p
               onMouseOver={() => {

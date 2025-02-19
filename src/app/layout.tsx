@@ -6,6 +6,7 @@ import ContactUs from "@/components/UI/ContactUs";
 import Loader from "@/components/UI/Loader";
 import { LoadingProvider } from "@/context/LoadingContext";
 import SmoothScroll from "@/components/SmoothScroll";
+import Chat from "@/components/UI/Chat";
 
 const IRANSansWeb = localFont({
   src: [
@@ -77,6 +78,7 @@ export default function RootLayout({
         <Navbar />
         {children}
         <ContactUs />
+        <Chat/>
       </body>
       </LoadingProvider>
     </html>

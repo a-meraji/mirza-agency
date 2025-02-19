@@ -7,7 +7,7 @@ import { useRef } from "react";
 const AnimatedIcon = ({
   children,
 }: {
-  children: (progress: MotionValue<number>) => React.ReactNode;
+  children: (progress: MotionValue<number>, pathLength: MotionValue<number>, opacity: MotionValue<number>) => React.ReactNode;
 }) => {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
@@ -15,66 +15,69 @@ const AnimatedIcon = ({
     offset: ["start end", "end start"],
   });
 
+  const pathLength = useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 1]);
+  const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
+
   return (
     <div ref={ref} className="w-full h-full">
-      {children(scrollYProgress)}
+      {children(scrollYProgress, pathLength, opacity)}
     </div>
   );
 };
 
 const DesignIcon = () => (
   <AnimatedIcon>
-    {(scrollYProgress) => (
+    {(scrollYProgress, pathLength, opacity) => (
       <motion.svg
         width="100%"
         height="100%"
         viewBox="0 0 24 24"
         fill="none"
         stroke="#f49300"
-        strokeWidth="1.5"
+        strokeWidth="0.75"
         strokeLinecap="round"
         strokeLinejoin="round"
       >
         <motion.path
           d="M13 7 8.7 2.7a2.41 2.41 0 0 0-3.4 0L2.7 5.3a2.41 2.41 0 0 0 0 3.4L7 13"
           style={{
-            pathLength: useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 1]),
-            opacity: useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]),
+            pathLength,
+            opacity
           }}
         />
         <motion.path
           d="m8 6 2-2"
           style={{
-            pathLength: useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 1]),
-            opacity: useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]),
+            pathLength,
+            opacity
           }}
         />
         <motion.path
           d="m18 16 2-2"
           style={{
-            pathLength: useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 1]),
-            opacity: useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]),
+            pathLength,
+            opacity
           }}
         />
         <motion.path
           d="m17 11 4.3 4.3c.94.94.94 2.46 0 3.4l-2.6 2.6c-.94.94-2.46.94-3.4 0L11 17"
           style={{
-            pathLength: useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 1]),
-            opacity: useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]),
+            pathLength,
+            opacity
           }}
         />
         <motion.path
           d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"
           style={{
-            pathLength: useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 1]),
-            opacity: useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]),
+            pathLength,
+            opacity
           }}
         />
         <motion.path
           d="m15 5 4 4"
           style={{
-            pathLength: useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 1]),
-            opacity: useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]),
+            pathLength,
+            opacity
           }}
         />
       </motion.svg>
@@ -84,48 +87,36 @@ const DesignIcon = () => (
 
 const AIIcon = () => (
   <AnimatedIcon>
-    {(scrollYProgress) => (
+    {(scrollYProgress, pathLength, opacity) => (
       <motion.svg
         width="100%"
         height="100%"
         viewBox="0 0 24 24"
         fill="none"
         stroke="#f49300"
-        strokeWidth="1.5"
+        strokeWidth="0.75"
         strokeLinecap="round"
         strokeLinejoin="round"
       >
         <motion.path
           d="M12 6V2H8"
           style={{
-            pathLength: useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 1]),
-            opacity: useTransform(
-              scrollYProgress,
-              [0, 0.2, 0.8, 1],
-              [0, 1, 1, 0]
-            ),
+            pathLength,
+            opacity
           }}
         />
         <motion.path
           d="m8 18-4 4V8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2Z"
           style={{
-            pathLength: useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 1]),
-            opacity: useTransform(
-              scrollYProgress,
-              [0, 0.2, 0.8, 1],
-              [0, 1, 1, 0]
-            ),
+            pathLength,
+            opacity
           }}
         />
         <motion.path
           d="M2 12h2M9 11v2M15 11v2M20 12h2"
           style={{
-            pathLength: useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 1]),
-            opacity: useTransform(
-              scrollYProgress,
-              [0, 0.2, 0.8, 1],
-              [0, 1, 1, 0]
-            ),
+            pathLength,
+            opacity
           }}
         />
       </motion.svg>
@@ -135,103 +126,71 @@ const AIIcon = () => (
 
 const AutomationIcon = () => (
   <AnimatedIcon>
-    {(scrollYProgress) => (
+    {(scrollYProgress, pathLength, opacity) => (
       <motion.svg
         width="100%"
         height="100%"
         viewBox="0 0 24 24"
         fill="none"
         stroke="#f49300"
-        strokeWidth="1.5"
+        strokeWidth="0.75"
         strokeLinecap="round"
         strokeLinejoin="round"
       >
         <motion.path
           d="M11 10v4h4"
           style={{
-            pathLength: useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 1]),
-            opacity: useTransform(
-              scrollYProgress,
-              [0, 0.2, 0.8, 1],
-              [0, 1, 1, 0]
-            ),
+            pathLength,
+            opacity
           }}
         />
         <motion.path
           d="m11 14 1.535-1.605a5 5 0 0 1 8 1.5"
           style={{
-            pathLength: useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 1]),
-            opacity: useTransform(
-              scrollYProgress,
-              [0, 0.2, 0.8, 1],
-              [0, 1, 1, 0]
-            ),
+            pathLength,
+            opacity
           }}
         />
         <motion.path
           d="M16 2v4"
           style={{
-            pathLength: useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 1]),
-            opacity: useTransform(
-              scrollYProgress,
-              [0, 0.2, 0.8, 1],
-              [0, 1, 1, 0]
-            ),
+            pathLength,
+            opacity
           }}
         />
         <motion.path
           d="m21 18-1.535 1.605a5 5 0 0 1-8-1.5"
           style={{
-            pathLength: useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 1]),
-            opacity: useTransform(
-              scrollYProgress,
-              [0, 0.2, 0.8, 1],
-              [0, 1, 1, 0]
-            ),
+            pathLength,
+            opacity
           }}
         />
         <motion.path
           d="M21 22v-4h-4"
           style={{
-            pathLength: useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 1]),
-            opacity: useTransform(
-              scrollYProgress,
-              [0, 0.2, 0.8, 1],
-              [0, 1, 1, 0]
-            ),
+            pathLength,
+            opacity
           }}
         />
         <motion.path
           d="M21 8.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h4.3"
           style={{
-            pathLength: useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 1]),
-            opacity: useTransform(
-              scrollYProgress,
-              [0, 0.2, 0.8, 1],
-              [0, 1, 1, 0]
-            ),
+            pathLength,
+            opacity
           }}
         />
         <motion.path
           d="M3 10h4"
           style={{
-            pathLength: useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 1]),
-            opacity: useTransform(
-              scrollYProgress,
-              [0, 0.2, 0.8, 1],
-              [0, 1, 1, 0]
-            ),
+            pathLength,
+            opacity
           }}
         />
         <motion.path
           d="M8 2v4"
           style={{
-            pathLength: useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 1]),
-            opacity: useTransform(
-              scrollYProgress,
-              [0, 0.2, 0.8, 1],
-              [0, 1, 1, 0]
-            ),
+            pathLength,
+            opacity
           }}
         />
       </motion.svg>
@@ -241,92 +200,92 @@ const AutomationIcon = () => (
 
 const SupportIcon = () => (
   <AnimatedIcon>
-    {(scrollYProgress) => (
+    {(scrollYProgress, pathLength, opacity) => (
       <motion.svg
         width="100%"
         height="100%"
         viewBox="0 0 24 24"
         fill="none"
         stroke="#f49300"
-        strokeWidth="1.5"
+        strokeWidth="0.75"
         strokeLinecap="round"
         strokeLinejoin="round"
       >
         <motion.path
           d="M12 17v4"
           style={{
-            pathLength: useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 1]),
-            opacity: useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]),
+            pathLength,
+            opacity
           }}
         />
         <motion.path
           d="m15.2 4.9-.9-.4"
           style={{
-            pathLength: useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 1]),
-            opacity: useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]),
+            pathLength,
+            opacity
           }}
         />
         <motion.path
           d="m15.2 7.1-.9.4"
           style={{
-            pathLength: useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 1]),
-            opacity: useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]),
+            pathLength,
+            opacity
           }}
         />
         <motion.path
           d="m16.9 3.2-.4-.9"
           style={{
-            pathLength: useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 1]),
-            opacity: useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]),
+            pathLength,
+            opacity
           }}
         />
         <motion.path
           d="m16.9 8.8-.4.9"
           style={{
-            pathLength: useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 1]),
-            opacity: useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]),
+            pathLength,
+            opacity
           }}
         />
         <motion.path
           d="m19.5 2.3-.4.9"
           style={{
-            pathLength: useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 1]),
-            opacity: useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]),
+            pathLength,
+            opacity
           }}
         />
         <motion.path
           d="m19.5 9.7-.4-.9"
           style={{
-            pathLength: useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 1]),
-            opacity: useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]),
+            pathLength,
+            opacity
           }}
         />
         <motion.path
           d="m21.7 4.5-.9.4"
           style={{
-            pathLength: useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 1]),
-            opacity: useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]),
+            pathLength,
+            opacity
           }}
         />
         <motion.path
           d="m21.7 7.5-.9-.4"
           style={{
-            pathLength: useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 1]),
-            opacity: useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]),
+            pathLength,
+            opacity
           }}
         />
         <motion.path
           d="M22 13v2a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7"
           style={{
-            pathLength: useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 1]),
-            opacity: useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]),
+            pathLength,
+            opacity
           }}
         />
         <motion.path
           d="M8 21h8"
           style={{
-            pathLength: useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 1]),
-            opacity: useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]),
+            pathLength,
+            opacity
           }}
         />
         <motion.circle
@@ -334,8 +293,8 @@ const SupportIcon = () => (
           cy="6"
           r="3"
           style={{
-            pathLength: useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 1]),
-            opacity: useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]),
+            pathLength,
+            opacity
           }}
         />
       </motion.svg>

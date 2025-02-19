@@ -1,11 +1,11 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { fadeIn, slideIn } from "@/utils/motion";
+import { fadeIn } from "@/utils/motion";
 import { ReactNode, useState } from "react";
 import TextScrollOpacity from "../UI/TextScrollOpacity";
 import Modal from "../UI/Modal";
-import { Button } from "../ui/button";
+import { Button } from "../UI/button";
 import { ChevronLeft } from "lucide-react";
 
 interface ServiceSectionProps {
@@ -59,7 +59,7 @@ const ServiceSection = ({
           </motion.h2>
           <motion.div
             variants={fadeIn(isReversed ? "left" : "right", index * 0.2)}
-            className="text-base lg:text-lg text-[#422800]/80 leading-relaxed"
+            className="text-base lg:text-lg text-[#422800]/80"
           >
             <TextScrollOpacity paragraph={description} />
             {modalTitle && modalDescription && (

@@ -1,7 +1,7 @@
 "use client"
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, MotionValue } from 'framer-motion';
 import React, { useRef } from 'react';
-    import styles from './style.module.css';
+import styles from './style.module.css';
 
 export default function Paragraph({paragraph}: {paragraph: string}) {
 
@@ -28,7 +28,15 @@ export default function Paragraph({paragraph}: {paragraph: string}) {
   )
 }
 
-const Word = ({children, progress, range}: {children: string, progress: any, range: any}) => {
+const Word = ({
+  children,
+  progress,
+  range,
+}: {
+  children: string;
+  progress: MotionValue<number>;
+  range: [number, number];
+}) => {
   const opacity = useTransform(progress, range, [0, 1])
   return <span className={styles.word}>
     <span className={styles.shadow}>{children}</span>

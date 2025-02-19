@@ -103,7 +103,7 @@ function addVariablesForColors({
 	);
    
 	addBase({
-	  ":root": newVars,
+	  ":root": newVars as Record<string, string>,
 	});
   }
   
