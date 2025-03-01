@@ -40,8 +40,8 @@ function Navbar() {
       >
         <div className={`
           w-[22.5px] relative pointer-events-none
-          before:content-[''] before:h-[1px] before:w-full before:bg-[#ffa620] before:relative before:block before:transition-all before:duration-[1500ms] before:ease-[cubic-bezier(0.76,0,0.24,1)] before:top-[4px]
-          after:content-[''] after:h-[1px] after:w-full after:bg-[#ffa620] after:relative after:block after:transition-all after:duration-[1500ms] after:ease-[cubic-bezier(0.76,0,0.24,1)] after:top-[-4px]
+          before:content-[''] before:h-[1px] before:w-full before:bg-[#ffa620] before:relative before:block before:transition-all before:duration-&lsqb;1500ms&rsqb; before:ease-&lsqb;cubic-bezier(0.76,0,0.24,1)&rsqb; before:top-[4px]
+          after:content-[''] after:h-[1px] after:w-full after:bg-[#ffa620] after:relative after:block after:transition-all after:duration-&lsqb;1500ms&rsqb; after:ease-&lsqb;cubic-bezier(0.76,0,0.24,1)&rsqb; after:top-[-4px]
           ${isActive ? 
             'before:rotate-[-45deg] before:top-[2px] after:rotate-[45deg] after:-top-[1px]' : 
             ''

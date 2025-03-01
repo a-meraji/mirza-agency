@@ -13,8 +13,8 @@ const TermsOfService = () => {
         <section className="mb-6">
           <h3 className="text-xl font-medium mb-2">1. Introduction</h3>
           <p className="mb-2">
-            Welcome to our application. These Terms of Service ("Terms") govern your use of our application, 
-            website, and services (collectively, the "Services"). By accessing or using our Services, you agree 
+            Welcome to our application. These Terms of Service (&quot;Terms&quot;) govern your use of our application, 
+            website, and services (collectively, the &quot;Services&quot;). By accessing or using our Services, you agree 
             to be bound by these Terms. If you disagree with any part of the Terms, you may not access the Services.
           </p>
         </section>
@@ -31,7 +31,7 @@ const TermsOfService = () => {
           <ul className="list-disc pl-6 mb-2">
             <li>Use the Services in any way that violates any applicable law or regulation.</li>
             <li>Attempt to interfere with the proper functioning of the Services.</li>
-            <li>Engage in any conduct that restricts or inhibits anyone's use or enjoyment of the Services.</li>
+            <li>Engage in any conduct that restricts or inhibits anyone&apos;s use or enjoyment of the Services.</li>
             <li>Use the Services to distribute malware, spyware, or other harmful code.</li>
             <li>Attempt to gain unauthorized access to our systems or user accounts.</li>
           </ul>
@@ -67,7 +67,7 @@ const TermsOfService = () => {
           <h3 className="text-xl font-medium mb-2">5. User Content</h3>
           <p className="mb-2">
             Our Services may allow you to post, link, store, share and otherwise make available certain information, 
-            text, graphics, videos, or other material ("Content"). You are responsible for the Content that you post 
+            text, graphics, videos, or other material (&quot;Content&quot;). You are responsible for the Content that you post 
             on or through the Services, including its legality, reliability, and appropriateness.
           </p>
           <p className="mb-2">
@@ -114,7 +114,7 @@ const TermsOfService = () => {
         <section className="mb-6">
           <h3 className="text-xl font-medium mb-2">9. Disclaimer</h3>
           <p className="mb-2">
-            Your use of the Services is at your sole risk. The Services are provided on an "AS IS" and "AS AVAILABLE" basis. 
+            Your use of the Services is at your sole risk. The Services are provided on an &quot;AS IS&quot; and &quot;AS AVAILABLE&quot; basis. 
             The Services are provided without warranties of any kind, whether express or implied, including, but not limited to, 
             implied warranties of merchantability, fitness for a particular purpose, non-infringement or course of performance.
           </p>
@@ -124,7 +124,7 @@ const TermsOfService = () => {
           <h3 className="text-xl font-medium mb-2">10. Changes to Terms</h3>
           <p className="mb-2">
             We reserve the right, at our sole discretion, to modify or replace these Terms at any time. If a revision is material 
-            we will try to provide at least 30 days' notice prior to any new terms taking effect. What constitutes a material 
+            we will try to provide at least 30 days&apos; notice prior to any new terms taking effect. What constitutes a material 
             change will be determined at our sole discretion. By continuing to access or use our Services after those revisions 
             become effective, you agree to be bound by the revised terms.
           </p>
@@ -146,7 +146,7 @@ const TermsOfService = () => {
         <section className="mb-6">
           <h3 className="text-xl font-medium mb-2">۱. مقدمه</h3>
           <p className="mb-2">
-            به برنامه ما خوش آمدید. این شرایط استفاده از خدمات ("شرایط") بر استفاده شما از برنامه، وب‌سایت و خدمات ما (مجموعاً "خدمات") حاکم است.
+            به برنامه ما خوش آمدید. این شرایط استفاده از خدمات (&quot;شرایط&quot;) بر استفاده شما از برنامه، وب‌سایت و خدمات ما (مجموعاً &quot;خدمات&quot;) حاکم است.
             با دسترسی یا استفاده از خدمات ما، شما موافقت می‌کنید که به این شرایط پایبند باشید. اگر با هر بخشی از شرایط مخالف هستید، ممکن است به خدمات دسترسی نداشته باشید.
           </p>
         </section>
@@ -191,7 +191,7 @@ const TermsOfService = () => {
         <section className="mb-6">
           <h3 className="text-xl font-medium mb-2">۵. محتوای کاربر</h3>
           <p className="mb-2">
-            خدمات ما ممکن است به شما اجازه دهد اطلاعات، متن، گرافیک، ویدیو یا سایر مطالب خاصی ("محتوا") را پست، لینک، ذخیره، به اشتراک بگذارید و در غیر این صورت در دسترس قرار دهید. شما مسئول محتوایی هستید که در یا از طریق خدمات پست می‌کنید، از جمله قانونی بودن، قابلیت اطمینان و مناسب بودن آن.
+            خدمات ما ممکن است به شما اجازه دهد اطلاعات، متن، گرافیک، ویدیو یا سایر مطالب خاصی (&quot;محتوا&quot;) را پست، لینک، ذخیره، به اشتراک بگذارید و در غیر این صورت در دسترس قرار دهید. شما مسئول محتوایی هستید که در یا از طریق خدمات پست می‌کنید، از جمله قانونی بودن، قابلیت اطمینان و مناسب بودن آن.
           </p>
           <p className="mb-2">
             با پست کردن محتوا در یا از طریق خدمات، شما به ما حق استفاده، اصلاح، اجرای عمومی، نمایش عمومی، تکثیر و توزیع چنین محتوایی را در و از طریق خدمات اعطا می‌کنید. شما تمام حقوق خود را نسبت به هر محتوایی که ارسال، پست یا نمایش می‌دهید حفظ می‌کنید و مسئول محافظت از این حقوق هستید.
@@ -222,7 +222,7 @@ const TermsOfService = () => {
         <section className="mb-6">
           <h3 className="text-xl font-medium mb-2">۹. سلب مسئولیت</h3>
           <p className="mb-2">
-            استفاده شما از خدمات با خطر خود شماست. خدمات به صورت "همانطور که هست" و "همانطور که در دسترس است" ارائه می‌شوند. خدمات بدون هیچگونه ضمانتی از هر نوع، چه صریح یا ضمنی، از جمله، اما نه محدود به، ضمانت‌های ضمنی قابلیت فروش، تناسب برای یک هدف خاص، عدم نقض یا دوره عملکرد ارائه می‌شوند.
+            استفاده شما از خدمات با خطر خود شماست. خدمات به صورت &quot;همانطور که هست&quot; و &quot;همانطور که در دسترس است&quot; ارائه می‌شوند. خدمات بدون هیچگونه ضمانتی از هر نوع، چه صریح یا ضمنی، از جمله، اما نه محدود به، ضمانت‌های ضمنی قابلیت فروش، تناسب برای یک هدف خاص، عدم نقض یا دوره عملکرد ارائه می‌شوند.
           </p>
         </section>
         

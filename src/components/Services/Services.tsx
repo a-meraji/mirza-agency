@@ -31,7 +31,7 @@ const AnimatedIcon = ({
 };
 
 const icons = [
-  <AnimatedIcon>
+  <AnimatedIcon key="icon-1">
     {(scrollYProgress, pathLength, opacity) => (
       <motion.svg
         width="100%"
@@ -67,7 +67,7 @@ const icons = [
       </motion.svg>
     )}
   </AnimatedIcon>,
-    <AnimatedIcon>
+    <AnimatedIcon key="icon-2">
     {(scrollYProgress, pathLength, opacity) => {
       // Create custom animation timing for different parts of the headset
       const headsetMainPath = useTransform(
@@ -113,7 +113,7 @@ const icons = [
       );
     }}
   </AnimatedIcon>,
-  <AnimatedIcon>
+  <AnimatedIcon key="icon-3">
     {(scrollYProgress, pathLength, opacity) => (
       <motion.svg
         width="100%"
@@ -157,7 +157,7 @@ const icons = [
       </motion.svg>
     )}
   </AnimatedIcon>,
-  <AnimatedIcon>
+  <AnimatedIcon key="icon-4">
     {(scrollYProgress, pathLength, opacity) => (
       <motion.svg
         width="100%"
