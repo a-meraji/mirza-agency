@@ -13,7 +13,6 @@ export default function Body({
     title: string;
     id: string;
     icon: LucideIcon;
-    text: string;
   }>;
   selectedLink: { isActive: boolean; index: number };
   setSelectedLink: (link: { isActive: boolean; index: number }) => void;
@@ -21,7 +20,7 @@ export default function Body({
   return (
     <div className="my-10 lg:my-20 bg-[#462d22b4] backdrop-blur-[10px] rounded-[10px] p-[10px] w-full h-full">
       {links.map((link, index) => {
-        const { id, text } = link;
+        const { id, title } = link;
         return (
           <Link
             key={`l_${index}`}
@@ -59,7 +58,7 @@ export default function Body({
               }
               className="my-10 flex overflow-hidden text-2xl  titr"
             >
-              {text}
+              {title}
             </motion.p>
           </Link>
         );

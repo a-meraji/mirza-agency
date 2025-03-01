@@ -30,9 +30,9 @@ function Navbar() {
           src="./logo.svg"
           width={55}
           height={55}
-          alt="لوگو آژانس توسعه میرزا"
+          alt="لوگو آژانس اتوماسیون هوشمند میرزا"
         />
-        آژانس توسعه میرزا
+        آژانس هوش مصنوعی میرزا
       </div>
       <div 
         onClick={() => {setIsActive(!isActive)}} 

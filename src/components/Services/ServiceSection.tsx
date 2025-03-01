@@ -38,7 +38,7 @@ const ServiceSection = ({
         onClose={() => setIsModalOpen(false)}
         title={modalTitle || ""}
       >
-        {modalDescription}
+        <div dangerouslySetInnerHTML={{ __html: modalDescription || "" }} />
       </Modal>
 
       <motion.div

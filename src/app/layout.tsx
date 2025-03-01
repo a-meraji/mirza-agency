@@ -7,6 +7,7 @@ import Loader from "@/components/UI/Loader";
 import { LoadingProvider } from "@/context/LoadingContext";
 import SmoothScroll from "@/components/SmoothScroll";
 import Chat from "@/components/UI/Chat";
+import Footer from "@/components/UI/Footer";
 
 const IRANSansWeb = localFont({
   src: [
@@ -54,8 +55,8 @@ const AkharinKhabar = localFont({
 
 
 export const metadata: Metadata = {
-  title: "میرزا | توسعه دهنده وب",
-  description: "ارائه راهکار های فنی مختص فروشگاه های اینترنتی",
+  title: "میرزا | آژانس هوش مصنوعی",
+  description: "پشتیبانی هوشمند امور مشتریان",
 };
 
 export default function RootLayout({
@@ -78,7 +79,8 @@ export default function RootLayout({
         <Navbar />
         {children}
         <ContactUs />
-        <Chat/>
+        <Footer />
+        {/* <Chat/> */}
       </body>
       </LoadingProvider>
     </html>

@@ -1,6 +1,7 @@
 .paragraph{
     display: flex;
-    font-size: 1.5rem;
+    font-size: 1.4rem;
+    font-weight: 500;
     line-height: 1;
     padding: 40px;
     max-width: 1280px;
@@ -9,8 +10,8 @@
   }
   .word{
     position: relative;
-    margin-right: 12px;
-    margin-top: 12px;
+    margin-right: 8px;
+    margin-top: 11px;
     .shadow{
       position: absolute;
       opacity: 20%;

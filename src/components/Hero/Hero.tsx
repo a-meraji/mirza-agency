@@ -111,13 +111,13 @@ const Hero = () => {
           variants={titleVariants}
           className="text-6xl font-bold mt-4 text-iconic"
         >
-          معماری دکان های دیجیتال
+                     تعامل هوشمند با مشتریان
         </motion.h1>
         <motion.p 
           variants={titleVariants}
           className="mt-6 text-2xl"
         >
-          ارائه راهکار های فنی مختص فروشگاه ها اینترنتی
+          با چت‌بات‌ های هوشمند و دستیارهای مجازی میرزا
         </motion.p>
       </motion.div>
 
@@ -154,7 +154,7 @@ const Hero = () => {
             }}
           >
             {<service.icon className="w-10 h-10 text-iconic2" />}
-            <span>{service.text}</span>
+            <span>{service.title}</span>
           </motion.div>
         ))}
       </motion.div>
