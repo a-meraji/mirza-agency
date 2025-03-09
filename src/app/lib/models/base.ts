@@ -1,5 +1,6 @@
 import mongoose, { Document, Model, Schema } from 'mongoose';
-import dbConnect from '../mongodb';
+import { connectToDatabase } from '../db';
+import { DatabaseService } from '../services/database';
 
 /**
  * Base model class that provides common functionality for all models
@@ -29,11 +30,12 @@ export abstract class BaseModel<T extends Document> {
    * Ensure database connection before any operation
    */
   protected async ensureConnection() {
-    await dbConnect();
+    // Use the simplified database connection utility
+    await connectToDatabase();
     
-    // Check if connection is valid
-    if (mongoose.connection.readyState !== 1) {
-      throw new Error('Database connection is not ready');
+    // Make sure model is initialized
+    if (!this.model) {
+      this.model = this.getModel();
     }
   }
 
@@ -101,7 +103,8 @@ export interface CreateOptions<T> {
  * Common interface for update options
  */
 export interface UpdateOptions<T> {
-  id: string;
+  id?: string;
+  where?: { id: string };
   data: Partial<T>;
 }
 
@@ -109,5 +112,6 @@ export interface UpdateOptions<T> {
  * Common interface for delete options
  */
 export interface DeleteOptions {
-  id: string;
+  id?: string;
+  where?: { id: string };
 } 

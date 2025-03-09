@@ -9,10 +9,52 @@ import {
 } from "@/components/UI/drawer";
 import { services } from "@/lib/data";
 import { format } from "date-fns-jalali";
+import fa from "date-fns/locale/fa-IR";
 import { ChevronRight, ChevronLeft, Calendar, Clock, Loader2 } from "lucide-react";
 
+// Define types for the components
+interface ServiceSelectionProps {
+  selectedOptions: number[];
+  handleOptionClick: (index: number) => void;
+  goToNextStep: () => void;
+}
+
+interface TimeSlot {
+  id: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+}
+
+interface TimeSelectionProps {
+  availableSlots: TimeSlot[];
+  selectedSlot: TimeSlot | null;
+  setSelectedSlot: (slot: TimeSlot) => void;
+  goToPrevStep: () => void;
+  goToNextStep: () => void;
+}
+
+interface FormData {
+  name: string;
+  email: string;
+  phone: string;
+  notes?: string;
+}
+
+interface ContactFormProps {
+  formData: FormData;
+  setFormData: React.Dispatch<React.SetStateAction<FormData>>;
+  goToPrevStep: () => void;
+  handleSubmit: (e: React.FormEvent) => void;
+  isSubmitting: boolean;
+}
+
+interface SuccessMessageProps {
+  closeDrawer: () => void;
+}
+
 // Step components
-const ServiceSelection = ({ selectedOptions, handleOptionClick, goToNextStep }) => (
+const ServiceSelection = ({ selectedOptions, handleOptionClick, goToNextStep }: ServiceSelectionProps) => (
   <div className="p-4">
     <div className="grid grid-cols-2 gap-4">
       {services.map((service, index) => (
@@ -42,12 +84,12 @@ const ServiceSelection = ({ selectedOptions, handleOptionClick, goToNextStep }) 
   </div>
 );
 
-const TimeSelection = ({ availableSlots, selectedSlot, setSelectedSlot, goToPrevStep, goToNextStep }) => {
-  const [groupedSlots, setGroupedSlots] = useState({});
+const TimeSelection = ({ availableSlots, selectedSlot, setSelectedSlot, goToPrevStep, goToNextStep }: TimeSelectionProps) => {
+  const [groupedSlots, setGroupedSlots] = useState<Record<string, TimeSlot[]>>({});
   
   useEffect(() => {
     // Group slots by date
-    const grouped = availableSlots.reduce((acc, slot) => {
+    const grouped = availableSlots.reduce((acc: Record<string, TimeSlot[]>, slot: TimeSlot) => {
       const date = new Date(slot.date).toDateString();
       if (!acc[date]) {
         acc[date] = [];
@@ -75,12 +117,12 @@ const TimeSelection = ({ availableSlots, selectedSlot, setSelectedSlot, goToPrev
               <div className="flex items-center mb-3">
                 <Calendar className="h-5 w-5 text-[#ffa620] ml-2" />
                 <h4 className="font-medium text-[#462d22]">
-                  {format(new Date(date), 'EEEE dd MMMM yyyy', { locale: 'fa-IR' })}
+                  {format(new Date(date), 'EEEE dd MMMM yyyy', { locale: fa })}
                 </h4>
               </div>
               
               <div className="grid grid-cols-3 gap-2">
-                {slots.map((slot, idx) => {
+                {slots.map((slot: TimeSlot, idx: number) => {
                   const startTime = new Date(slot.startTime);
                   const endTime = new Date(slot.endTime);
                   const isSelected = selectedSlot && selectedSlot.id === slot.id;
@@ -126,8 +168,8 @@ const TimeSelection = ({ availableSlots, selectedSlot, setSelectedSlot, goToPrev
   );
 };
 
-const ContactForm = ({ formData, setFormData, goToPrevStep, handleSubmit, isSubmitting }) => {
-  const handleChange = (e) => {
+const ContactForm = ({ formData, setFormData, goToPrevStep, handleSubmit, isSubmitting }: ContactFormProps) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
@@ -216,7 +258,7 @@ const ContactForm = ({ formData, setFormData, goToPrevStep, handleSubmit, isSubm
   );
 };
 
-const SuccessMessage = ({ closeDrawer }) => (
+const SuccessMessage = ({ closeDrawer }: SuccessMessageProps) => (
   <div className="p-4 text-center">
     <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
       <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -240,12 +282,12 @@ export default function ContactUs() {
   const [isOpen, setIsOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedOptions, setSelectedOptions] = useState<number[]>([]);
-  const [availableSlots, setAvailableSlots] = useState([]);
-  const [selectedSlot, setSelectedSlot] = useState(null);
+  const [availableSlots, setAvailableSlots] = useState<TimeSlot[]>([]);
+  const [selectedSlot, setSelectedSlot] = useState<TimeSlot | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState(false);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     name: '',
     email: '',
     phone: '',
@@ -292,7 +334,7 @@ export default function ContactUs() {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!selectedSlot) return;

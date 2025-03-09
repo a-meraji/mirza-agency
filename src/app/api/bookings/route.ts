@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { db } from "@/app/lib/models";
 import dbConnect from "@/app/lib/mongodb";
+import { connectToDatabase } from "@/app/lib/db";
 import mongoose from "mongoose";
 
 // Helper function to retry database operations
@@ -10,28 +11,13 @@ async function retryOperation<T>(operation: () => Promise<T>, maxRetries = 5, de
   let lastError;
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-      // Ensure DB connection is established before each attempt
-      await dbConnect();
-      
-      // Check MongoDB connection state
-      if (mongoose.connection.readyState !== 1) {
-        console.log(`MongoDB not connected (state: ${mongoose.connection.readyState}), reconnecting...`);
-        await dbConnect();
-      }
+      // Make sure database connection is established before each attempt
+      await connectToDatabase();
       
       return await operation();
     } catch (error) {
       lastError = error;
       console.error(`Attempt ${attempt}/${maxRetries} failed:`, error);
-      
-      // If this is a connection error, try to reconnect
-      if (error instanceof mongoose.Error.MongooseServerSelectionError || 
-          (error instanceof Error && error.message.includes('buffering timed out'))) {
-        console.log('Connection error detected, forcing reconnection...');
-        // Force reconnection
-        mongoose.connection.close();
-        await dbConnect();
-      }
       
       if (attempt < maxRetries) {
         console.log(`Retrying in ${delay}ms...`);
@@ -48,7 +34,7 @@ async function retryOperation<T>(operation: () => Promise<T>, maxRetries = 5, de
 export async function GET(req: NextRequest) {
   try {
     // Ensure DB connection is established
-    await dbConnect();
+    await connectToDatabase();
     
     // Get session with retry
     let session;
@@ -102,7 +88,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     // Ensure DB connection is established
-    await dbConnect();
+    await connectToDatabase();
     
     const { appointmentId, name, email, phone, notes, selectedServices } = await req.json();
     
@@ -111,50 +97,73 @@ export async function POST(req: NextRequest) {
     }
     
     // Check if appointment exists and is not already booked
-    const appointment = await retryOperation(() => 
-      db.availableAppointment.findUnique({
-        where: { id: appointmentId }
-      })
-    );
-    
-    if (!appointment) {
-      return NextResponse.json({ error: "Appointment not found" }, { status: 404 });
+    try {
+      console.log(`Looking up appointment with ID: ${appointmentId}`);
+      
+      // Use findById directly instead of findUnique for more reliability
+      const appointment = await retryOperation(() => 
+        db.availableAppointment.findById({ id: appointmentId })
+      );
+      
+      if (!appointment) {
+        console.error(`Appointment with ID ${appointmentId} not found`);
+        return NextResponse.json({ error: "Appointment not found" }, { status: 404 });
+      }
+      
+      console.log(`Found appointment:`, JSON.stringify(appointment, null, 2));
+      
+      if (appointment.isBooked) {
+        return NextResponse.json({ error: "Appointment is already booked" }, { status: 400 });
+      }
+      
+      // Create booking and update appointment in a transaction
+      console.log(`Starting transaction to book appointment ${appointment.id}`);
+      try {
+        const bookingData = {
+          name,
+          email,
+          phone,
+          notes,
+          selectedServices,
+          appointmentId: appointment.id // Use the confirmed ID from the found appointment
+        };
+        
+        console.log(`Creating booking with data:`, JSON.stringify(bookingData, null, 2));
+        
+        const result = await retryOperation(() => 
+          db.$transaction([
+            db.booking.create({
+              data: bookingData as any // Type assertion to fix the type error
+            }),
+            db.availableAppointment.update({
+              id: appointment.id, // Use the id format that works with the model
+              data: { isBooked: true }
+            })
+          ])
+        );
+        
+        console.log(`Transaction completed successfully`);
+        return NextResponse.json({ 
+          success: true, 
+          booking: result[0],
+          appointment: result[1]
+        });
+      } catch (error) {
+        console.error(`Error during booking transaction:`, error);
+        return NextResponse.json({ 
+          error: `Error creating booking: ${error instanceof Error ? error.message : 'Unknown error'}` 
+        }, { status: 500 });
+      }
+    } catch (error) {
+      console.error(`Error looking up appointment:`, error);
+      return NextResponse.json({ 
+        error: `Error looking up appointment: ${error instanceof Error ? error.message : 'Unknown error'}` 
+      }, { status: 500 });
     }
-    
-    if (appointment.isBooked) {
-      return NextResponse.json({ error: "Appointment is already booked" }, { status: 400 });
-    }
-    
-    // Create booking and update appointment in a transaction
-    const result = await retryOperation(() => 
-      db.$transaction([
-        db.booking.create({
-          data: {
-            name,
-            email,
-            phone,
-            notes,
-            selectedServices,
-            appointmentId
-          } as any // Type assertion to fix the type error
-        }),
-        db.availableAppointment.update({
-          where: { id: appointmentId },
-          data: { isBooked: true }
-        })
-      ])
-    );
-    
-    return NextResponse.json({ 
-      success: true, 
-      booking: result[0],
-      appointment: result[1]
-    });
   } catch (error) {
-    console.error("Error creating booking:", error);
+    console.error(`Error looking up appointment:`, error);
     return NextResponse.json({ 
-      error: "Failed to create booking", 
-      details: error instanceof Error ? error.message : String(error) 
+      error: `Error looking up appointment: ${error instanceof Error ? error.message : 'Unknown error'}` 
     }, { status: 500 });
   }
 } 

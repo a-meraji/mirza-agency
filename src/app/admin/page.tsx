@@ -632,13 +632,42 @@ export default function AdminDashboard() {
           ) : (
             <div className="space-y-4">
               {bookings.map((booking) => {
+                // Add defensive check for availableAppointment
+                if (!booking.availableAppointment) {
+                  console.error(`Booking ${booking.id} is missing availableAppointment data`);
+                  return (
+                    <div key={booking.id} className="p-4 border rounded-lg bg-red-50 border-red-300">
+                      <p className="text-red-500 font-medium">Error: Missing appointment data for booking {booking.id}</p>
+                      <div className="mt-2">
+                        <p><span className="font-medium">Name:</span> {booking.name}</p>
+                        <p><span className="font-medium">Email:</span> {booking.email}</p>
+                        <p><span className="font-medium">Phone:</span> {booking.phone || 'N/A'}</p>
+                        <div className="flex justify-end mt-2 space-x-2">
+                          <button
+                            onClick={() => startEditBooking(booking)}
+                            className="text-blue-500 hover:text-blue-700"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDeleteBooking(booking.id)}
+                            className="text-red-500 hover:text-red-700"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                }
+                
                 const appointment = booking.availableAppointment;
                 const date = new Date(appointment.date);
                 const startTime = new Date(appointment.startTime);
                 const endTime = new Date(appointment.endTime);
                 
                 return (
-                  <div key={booking.id} className="border border-[#462d22]/20 rounded-lg p-4">
+                  <div key={booking.id} className="border border-[#462d22]/20 rounded-lg p-4 bg-[#fff6e8ec] backdrop-blur-sm">
                     <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-4">
                       <div>
                         <h3 className="font-semibold text-[#462d22]">{booking.name}</h3>

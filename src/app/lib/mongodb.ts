@@ -14,21 +14,66 @@ const MONGODB_URI = process.env.DATABASE_URL;
 let cached = global as any;
 
 if (!cached.mongoose) {
-  cached.mongoose = { conn: null, promise: null };
+  cached.mongoose = { conn: null, promise: null, isConnecting: false };
+}
+
+// Set up connection event listeners only once
+let listenersAttached = false;
+
+function attachConnectionListeners() {
+  if (listenersAttached) return;
+  
+  mongoose.connection.on('connected', () => {
+    console.log('MongoDB connected successfully');
+    cached.mongoose.isConnecting = false;
+  });
+  
+  mongoose.connection.on('error', (err) => {
+    console.error('MongoDB connection error:', err);
+    cached.mongoose.isConnecting = false;
+  });
+  
+  mongoose.connection.on('disconnected', () => {
+    console.log('MongoDB disconnected');
+    // Only reset if we're not in the middle of connecting
+    if (!cached.mongoose.isConnecting) {
+      cached.mongoose.conn = null;
+      cached.mongoose.promise = null;
+    }
+  });
+  
+  listenersAttached = true;
 }
 
 /**
  * Connect to MongoDB with proper error handling and connection management
  */
 async function dbConnect() {
+  // Attach connection listeners only once
+  attachConnectionListeners();
+  
   // If we have an existing connection and it's valid, return it
   if (cached.mongoose.conn) {
     if (mongoose.connection.readyState === 1) {
       return cached.mongoose.conn;
     } else {
-      console.log('MongoDB connection lost, reconnecting...');
-      cached.mongoose.conn = null;
+      console.log(`MongoDB connection not ready (state: ${mongoose.connection.readyState}), reconnecting...`);
+      // Only reset if we're not already trying to connect
+      if (!cached.mongoose.isConnecting) {
+        cached.mongoose.conn = null;
+        cached.mongoose.promise = null;
+      }
+    }
+  }
+
+  // If we're already trying to connect, wait for that promise
+  if (cached.mongoose.promise && cached.mongoose.isConnecting) {
+    try {
+      return await cached.mongoose.promise;
+    } catch (error) {
+      console.error('Connection attempt failed, trying again:', error);
       cached.mongoose.promise = null;
+      cached.mongoose.isConnecting = false;
     }
   }
 
@@ -47,24 +92,7 @@ async function dbConnect() {
     };
 
     console.log('Connecting to MongoDB...');
-    
-    // Set up connection event listeners
-    mongoose.connection.on('connected', () => {
-      console.log('MongoDB connected successfully');
-    });
-    
-    mongoose.connection.on('error', (err) => {
-      console.error('MongoDB connection error:', err);
-    });
-    
-    mongoose.connection.on('disconnected', () => {
-      console.log('MongoDB disconnected');
-      // Only reset if this is our cached connection
-      if (mongoose.connection === cached.mongoose.conn) {
-        cached.mongoose.conn = null;
-        cached.mongoose.promise = null;
-      }
-    });
+    cached.mongoose.isConnecting = true;
     
     // Create the connection promise
     cached.mongoose.promise = mongoose.connect(MONGODB_URI, opts);
@@ -74,10 +102,12 @@ async function dbConnect() {
     // Wait for the connection to be established
     cached.mongoose.conn = await cached.mongoose.promise;
     console.log('MongoDB connection established');
+    cached.mongoose.isConnecting = false;
     return cached.mongoose.conn;
   } catch (error) {
-    // Reset the promise on error
+    // Reset the promise and connection state on error
     cached.mongoose.promise = null;
+    cached.mongoose.isConnecting = false;
     
     // Detailed error logging
     console.error('MongoDB connection error:', error);

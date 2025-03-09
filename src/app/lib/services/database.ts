@@ -1,17 +1,38 @@
 import mongoose from 'mongoose';
-import dbConnect from '../mongodb';
+import { connectToDatabase } from '../db';
 
 /**
  * Database service for handling transactions and other database operations
  */
 export class DatabaseService {
   /**
+   * Ensure database connection is established before executing operations
+   * @returns The established connection
+   */
+  static async ensureConnection() {
+    try {
+      const conn = await connectToDatabase();
+      
+      // Double-check the connection state
+      if (mongoose.connection.readyState !== 1) {
+        console.log(`MongoDB connection not ready (state: ${mongoose.connection.readyState}), attempting to reconnect...`);
+        return await connectToDatabase();
+      }
+      
+      return conn;
+    } catch (error) {
+      console.error('Error establishing database connection:', error);
+      throw error;
+    }
+  }
+  
+  /**
    * Execute a transaction with proper error handling
    * @param operations Array of operations to execute in a transaction
    * @returns Results of the operations
    */
   static async transaction<T>(operations: (() => Promise<T>)[]): Promise<T[]> {
-    await dbConnect();
+    await this.ensureConnection();
     
     // Check if connection is valid
     if (mongoose.connection.readyState !== 1) {
@@ -20,9 +41,12 @@ export class DatabaseService {
     
     // For MongoDB 4.2+, we can use native transactions
     const session = await mongoose.startSession();
-    session.startTransaction();
+    let transactionInProgress = false;
     
     try {
+      session.startTransaction();
+      transactionInProgress = true;
+      
       const results: T[] = [];
       
       for (const operation of operations) {
@@ -30,22 +54,31 @@ export class DatabaseService {
           const result = await operation();
           results.push(result);
         } catch (error) {
-          // If any operation fails, abort the transaction
-          await session.abortTransaction();
+          // If any operation fails, abort the transaction if it's still in progress
+          if (transactionInProgress) {
+            await session.abortTransaction();
+            transactionInProgress = false;
+          }
           session.endSession();
           throw error;
         }
       }
       
-      // Commit the transaction
-      await session.commitTransaction();
+      // Commit the transaction if it's still in progress
+      if (transactionInProgress) {
+        await session.commitTransaction();
+        transactionInProgress = false;
+      }
       session.endSession();
       
       return results;
     } catch (error) {
-      // Make sure to abort and end session on error
+      // Make sure to abort and end session on error, only if transaction is still in progress
       try {
-        await session.abortTransaction();
+        if (transactionInProgress) {
+          await session.abortTransaction();
+          transactionInProgress = false;
+        }
       } catch (abortError) {
         console.error('Error aborting transaction:', abortError);
       }
@@ -61,7 +94,7 @@ export class DatabaseService {
    * @returns Results of the operations
    */
   static async executeInSequence<T>(operations: (() => Promise<T>)[]): Promise<T[]> {
-    await dbConnect();
+    await this.ensureConnection();
     
     const results: T[] = [];
     
@@ -90,13 +123,7 @@ export class DatabaseService {
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
         // Ensure DB connection before each attempt
-        await dbConnect();
-        
-        // Check MongoDB connection state
-        if (mongoose.connection.readyState !== 1) {
-          console.log(`MongoDB not connected (state: ${mongoose.connection.readyState}), reconnecting...`);
-          await dbConnect();
-        }
+        await this.ensureConnection();
         
         return await operation();
       } catch (error) {
@@ -110,9 +137,7 @@ export class DatabaseService {
         ) {
           console.log('Connection error detected, forcing reconnection...');
           try {
-            // Force reconnection
-            await mongoose.connection.close();
-            await dbConnect();
+            await this.ensureConnection();
           } catch (reconnectError) {
             console.error('Error during reconnection:', reconnectError);
           }

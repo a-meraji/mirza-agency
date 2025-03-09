@@ -2,13 +2,40 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { db } from "@/app/lib/models";
-import { FindUniqueOptions } from "@/app/lib/models/availableAppointment";
+import { connectToDatabase } from "@/app/lib/db";
+
+// Helper function to handle errors consistently
+function handleApiError(error: any, operation: string) {
+  const errorMessage = error instanceof Error ? error.message : String(error);
+  console.error(`Error ${operation} appointment:`, error);
+  return NextResponse.json({ 
+    error: `Failed to ${operation} appointment`,
+    details: errorMessage 
+  }, { status: 500 });
+}
 
 // GET a specific appointment by ID
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(
+  req: NextRequest, 
+  context: { params: { id: string } }
+) {
   try {
-    const options: FindUniqueOptions = {
-      where: { id: params.id },
+    // Ensure database connection is established
+    await connectToDatabase();
+    
+    // Properly await and extract the ID parameter
+    const params = context.params;
+    const id = params.id;
+    
+    if (!id) {
+      return NextResponse.json({ error: "Appointment ID is required" }, { status: 400 });
+    }
+    
+    console.log(`GET request for appointment ID: ${id}`);
+    
+    // Find the appointment
+    const options = {
+      where: { id },
       include: { booking: true }
     };
     
@@ -20,14 +47,29 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     
     return NextResponse.json(appointment);
   } catch (error) {
-    console.error("Error fetching appointment:", error);
-    return NextResponse.json({ error: "Failed to fetch appointment" }, { status: 500 });
+    return handleApiError(error, "fetching");
   }
 }
 
 // PUT to update an appointment (admin only)
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(
+  req: NextRequest, 
+  context: { params: { id: string } }
+) {
   try {
+    // Ensure database connection is established
+    await connectToDatabase();
+    
+    // Properly await and extract the ID parameter
+    const params = context.params;
+    const id = params.id;
+    
+    if (!id) {
+      return NextResponse.json({ error: "Appointment ID is required" }, { status: 400 });
+    }
+    
+    console.log(`PUT request for appointment ID: ${id}`);
+    
     const session = await getServerSession(authOptions);
     
     // Check if user is admin
@@ -35,16 +77,11 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     
-    const { date, startTime, endTime, duration } = await req.json();
-    
-    if (!date || !startTime || !endTime || !duration) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
-    }
+    const { date, startTime, endTime, duration, isBooked } = await req.json();
     
     // Check if appointment exists
-    const findOptions: FindUniqueOptions = {
-      where: { id: params.id },
-      include: { booking: true }
+    const findOptions = {
+      where: { id }
     };
     
     const existingAppointment = await db.availableAppointment.findUnique(findOptions);
@@ -53,31 +90,43 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
       return NextResponse.json({ error: "Appointment not found" }, { status: 404 });
     }
     
-    // Don't allow modifying a booked appointment's date/time
-    if (existingAppointment.isBooked) {
-      return NextResponse.json({ error: "Cannot modify a booked appointment's time" }, { status: 400 });
-    }
-    
+    // Update appointment
     const updatedAppointment = await db.availableAppointment.update({
-      where: { id: params.id },
+      where: { id },
       data: {
-        date: new Date(date),
-        startTime: new Date(startTime),
-        endTime: new Date(endTime),
-        duration: parseInt(duration)
+        date,
+        startTime,
+        endTime,
+        duration,
+        isBooked
       }
     });
     
     return NextResponse.json(updatedAppointment);
   } catch (error) {
-    console.error("Error updating appointment:", error);
-    return NextResponse.json({ error: "Failed to update appointment" }, { status: 500 });
+    return handleApiError(error, "updating");
   }
 }
 
 // DELETE an appointment (admin only)
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(
+  req: NextRequest, 
+  context: { params: { id: string } }
+) {
   try {
+    // Ensure database connection is established
+    await connectToDatabase();
+    
+    // Properly await and extract the ID parameter
+    const params = context.params;
+    const id = params.id;
+    
+    if (!id) {
+      return NextResponse.json({ error: "Appointment ID is required" }, { status: 400 });
+    }
+    
+    console.log(`DELETE request for appointment ID: ${id}`);
+    
     const session = await getServerSession(authOptions);
     
     // Check if user is admin
@@ -86,8 +135,8 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
     }
     
     // Check if appointment exists
-    const findOptions: FindUniqueOptions = {
-      where: { id: params.id },
+    const findOptions = {
+      where: { id },
       include: { booking: true }
     };
     
@@ -97,18 +146,20 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
       return NextResponse.json({ error: "Appointment not found" }, { status: 404 });
     }
     
-    // Don't allow deleting a booked appointment
+    // Check if appointment is booked
     if (existingAppointment.isBooked) {
-      return NextResponse.json({ error: "Cannot delete a booked appointment" }, { status: 400 });
+      return NextResponse.json({ 
+        error: "Cannot delete booked appointment. Cancel the booking first."
+      }, { status: 400 });
     }
     
+    // Delete appointment
     await db.availableAppointment.delete({
-      where: { id: params.id }
+      where: { id }
     });
     
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Error deleting appointment:", error);
-    return NextResponse.json({ error: "Failed to delete appointment" }, { status: 500 });
+    return handleApiError(error, "deleting");
   }
 } 

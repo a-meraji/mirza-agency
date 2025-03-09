@@ -171,19 +171,62 @@ export class AvailableAppointmentModel extends BaseModel<AvailableAppointmentDoc
       return await DatabaseService.executeWithRetry(async () => {
         const { id, data } = options;
         
+        // Get the where clause from options, which might be in a different format
+        // depending on if it's coming from the REST API or from the booking transaction
+        let whereId;
+        if (options.where && options.where.id) {
+          // If this format is used: { where: { id: ... }, data: ... }
+          whereId = options.where.id;
+        } else {
+          // If this format is used: { id: ..., data: ... }
+          whereId = id;
+        }
+        
+        // Log the ID we're trying to update
+        console.log(`Attempting to update appointment with id: ${whereId}`);
+        
+        // Try to handle both object ID and string formats
+        let appointmentId;
+        try {
+          if (typeof whereId === 'string') {
+            // Try to create a MongoDB ObjectId from the string ID
+            try {
+              appointmentId = new mongoose.Types.ObjectId(whereId);
+            } catch (convError) {
+              console.log(`ID ${whereId} is not a valid ObjectId, using as-is`);
+              appointmentId = whereId; // Fallback to using as is
+            }
+          } else {
+            appointmentId = whereId;
+          }
+        } catch (err) {
+          console.error(`Error converting ID: ${whereId}`, err);
+          appointmentId = whereId; // Fallback to using as is
+        }
+        
+        // Try to find the appointment first to confirm it exists
+        const exists = await this.model.findById(appointmentId).lean();
+        if (!exists) {
+          console.error(`Appointment with ID ${whereId} not found before update`);
+          throw new Error(`Appointment not found: ${whereId}`);
+        }
+        
+        // Perform the update with the properly formatted ID
         const updated = await this.model.findByIdAndUpdate(
-          id,
+          appointmentId,
           { $set: { ...data, updatedAt: new Date() } },
           { new: true } // Return the updated document
         ).lean();
         
         if (!updated) {
-          throw new Error('Appointment not found');
+          console.error(`Update failed for appointment with ID ${whereId}`);
+          throw new Error(`Update failed for appointment: ${whereId}`);
         }
         
         return this.formatDocument(updated);
       });
     } catch (error) {
+      console.error(`Error in update for ID: ${options.id || (options.where?.id)}`, error);
       return this.handleError(error, 'update');
     }
   }
@@ -208,6 +251,110 @@ export class AvailableAppointmentModel extends BaseModel<AvailableAppointmentDoc
       });
     } catch (error) {
       return this.handleError(error, 'delete');
+    }
+  }
+  
+  /**
+   * Find a single appointment by unique criteria (similar to Prisma's findUnique)
+   */
+  async findUnique(options: { where: Record<string, any>, include?: Record<string, boolean> }) {
+    try {
+      await this.ensureConnection();
+      
+      return await DatabaseService.executeWithRetry(async () => {
+        const { where, include = {} } = options;
+        
+        // Log the query for debugging
+        console.log(`findUnique query:`, JSON.stringify(where, null, 2));
+        
+        // Handle ID conversion if needed
+        let query = { ...where };
+        
+        if (where.id) {
+          try {
+            // Convert string ID to ObjectId if valid
+            if (typeof where.id === 'string') {
+              // Check if it's a valid ObjectId
+              try {
+                const objectId = new mongoose.Types.ObjectId(where.id);
+                console.log(`Converting string ID to ObjectId: ${where.id}`);
+                query = { 
+                  ...where,
+                  _id: objectId,
+                };
+                delete query.id; // Remove the string id from query
+              } catch (error) {
+                console.log(`ID ${where.id} is not a valid ObjectId, using as-is`);
+              }
+            }
+          } catch (err) {
+            console.error(`Error converting ID in findUnique: ${where.id}`, err);
+            // Keep the original ID if conversion fails
+          }
+        }
+        
+        // If the query has an _id, use findById
+        if (query._id) {
+          const appointment = await this.model.findById(query._id).lean();
+          
+          if (!appointment) {
+            console.log(`No appointment found with _id: ${query._id}`);
+            return null;
+          }
+          
+          const result = this.formatDocument(appointment);
+          
+          // Include related booking if requested
+          if (include.booking) {
+            const BookingModel = mongoose.models.Booking;
+            if (BookingModel) {
+              const booking = await BookingModel.findOne({ appointmentId: result.id }).lean();
+              if (booking) {
+                result.booking = {
+                  ...booking,
+                  id: booking._id.toString(),
+                };
+              } else {
+                result.booking = null;
+              }
+            }
+          }
+          
+          return result;
+        } else {
+          // Otherwise, use findOne with the query
+          console.log(`Using findOne with query:`, JSON.stringify(query, null, 2));
+          const appointment = await this.model.findOne(query).lean();
+          
+          if (!appointment) {
+            console.log(`No appointment found with query:`, JSON.stringify(query, null, 2));
+            return null;
+          }
+          
+          const result = this.formatDocument(appointment);
+          
+          // Include related booking if requested
+          if (include.booking) {
+            const BookingModel = mongoose.models.Booking;
+            if (BookingModel) {
+              const booking = await BookingModel.findOne({ appointmentId: result.id }).lean();
+              if (booking) {
+                result.booking = {
+                  ...booking,
+                  id: booking._id.toString(),
+                };
+              } else {
+                result.booking = null;
+              }
+            }
+          }
+          
+          return result;
+        }
+      });
+    } catch (error) {
+      console.error(`Error in findUnique:`, error);
+      return this.handleError(error, 'findUnique');
     }
   }
 }
