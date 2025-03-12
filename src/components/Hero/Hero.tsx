@@ -1,23 +1,10 @@
 "use client";
 
 import { motion } from "framer-motion";
-
-import { useEffect } from "react";
-import { useLoading } from "@/context/LoadingContext";
 import { scrollToSection } from "@/utils/scroll";
 import { services } from "@/lib/data";
 
 const Hero = () => {
-  const { setIsLoading } = useLoading();
-
-  useEffect(() => {
-    // Set loading to false when Hero component mounts and is ready
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1000); // Give some time for assets to load
-
-    return () => clearTimeout(timer);
-  }, [setIsLoading]);
 
   const containerVariants = {
     hidden: { opacity: 0 },

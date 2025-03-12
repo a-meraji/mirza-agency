@@ -13,6 +13,10 @@ export default {
   ],
   theme: {
   	extend: {
+  		fontFamily: {
+  			sans: ['var(--font-sans)'],
+  		},
+  		fontDisplay: 'swap',
   		colors: {
 			iconic: 'var(--iconic)',
 			iconic2: 'var(--iconic2)',

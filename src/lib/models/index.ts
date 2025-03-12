@@ -1,6 +1,7 @@
 import { availableAppointmentModel } from './availableAppointment';
 import { bookingModel } from './booking';
 import { userModel } from './user';
+import { blogModel } from './blog';
 import { DatabaseService } from '../services/database';
 
 /**
@@ -12,6 +13,7 @@ export const db = {
   availableAppointment: availableAppointmentModel,
   booking: bookingModel,
   user: userModel,
+  blog: blogModel,
   
   // Transaction support
   $transaction: async (operations: Promise<any>[]) => {
@@ -27,7 +29,8 @@ export const db = {
 export {
   availableAppointmentModel,
   bookingModel,
-  userModel
+  userModel,
+  blogModel
 };
 
 // Default export with named variable
@@ -35,6 +38,7 @@ const models = {
   availableAppointmentModel,
   bookingModel,
   userModel,
+  blogModel,
   db
 };
 

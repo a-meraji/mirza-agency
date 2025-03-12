@@ -12,7 +12,10 @@ import {
   Trash, 
   Loader2,
   Mail,
-  Phone
+  Phone,
+  Tag,
+  FileText,
+  RefreshCw
 } from "lucide-react";
 import fa from "date-fns/locale/fa-IR";
 
@@ -41,14 +44,33 @@ interface Appointment {
   booking?: Booking;
 }
 
+// New interface for Blog type
+interface Blog {
+  id: string;
+  title: string;
+  slug: string;
+  date: string;
+  tags: string[];
+  description: string;
+  ogImage?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("appointments");
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
+  // New state for blogs
+  const [blogs, setBlogs] = useState<Blog[]>([]);
   const [loading, setLoading] = useState(true);
+  const [blogLoading, setBlogLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [editingAppointment, setEditingAppointment] = useState<Appointment | null>(null);
   const [editingBooking, setEditingBooking] = useState<Booking | null>(null);
+  // New state for blog form
+  const [showBlogForm, setShowBlogForm] = useState(false);
+  const [editingBlog, setEditingBlog] = useState<Blog | null>(null);
   const [showBookingForm, setShowBookingForm] = useState(false);
   const [formData, setFormData] = useState({
     date: "",
@@ -63,6 +85,19 @@ export default function AdminDashboard() {
     notes: "",
     selectedServices: [] as string[]
   });
+  // New state for blog form data
+  const [blogFormData, setBlogFormData] = useState({
+    title: "",
+    slug: "",
+    date: "",
+    tags: "",
+    description: "",
+    ogImage: ""
+  });
+  // New state for file upload
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [uploadMessage, setUploadMessage] = useState("");
+  const [isUploading, setIsUploading] = useState(false);
 
   // Fetch appointments and bookings
   useEffect(() => {
@@ -87,6 +122,27 @@ export default function AdminDashboard() {
 
     fetchData();
   }, []);
+
+  // New useEffect to fetch blogs when the blogs tab is active
+  useEffect(() => {
+    if (activeTab === "blogs") {
+      fetchBlogs();
+    }
+  }, [activeTab]);
+
+  // New function to fetch blogs
+  const fetchBlogs = async () => {
+    try {
+      setBlogLoading(true);
+      const res = await fetch("/api/blogs");
+      const data = await res.json();
+      setBlogs(data.blogs || []);
+    } catch (error) {
+      console.error("Error fetching blogs:", error);
+    } finally {
+      setBlogLoading(false);
+    }
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -322,6 +378,217 @@ export default function AdminDashboard() {
     setShowBookingForm(true);
   };
 
+  // New handlers for blog form
+  const handleBlogInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setBlogFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      if (file.name.endsWith('.md')) {
+        setSelectedFile(file);
+        setUploadMessage("");
+        
+        // Extract slug from filename
+        const slug = file.name.replace('.md', '');
+        
+        // Update the form data with the slug
+        setBlogFormData(prev => ({
+          ...prev,
+          slug
+        }));
+      } else {
+        setSelectedFile(null);
+        setUploadMessage("Please select a Markdown (.md) file");
+      }
+    }
+  };
+
+  // New function to handle blog creation
+  const handleCreateBlog = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!selectedFile) {
+      setUploadMessage("Please select a Markdown (.md) file");
+      return;
+    }
+    
+    try {
+      setIsUploading(true);
+      setUploadMessage("");
+      
+      // First upload the file
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+      
+      // Add metadata
+      const metadata = {
+        title: blogFormData.title,
+        slug: blogFormData.slug,
+        date: blogFormData.date,
+        tags: blogFormData.tags.split(',').map(tag => tag.trim()).filter(tag => tag),
+        description: blogFormData.description,
+        ogImage: blogFormData.ogImage
+      };
+      
+      formData.append('metadata', JSON.stringify(metadata));
+      
+      const uploadResponse = await fetch('/api/blogs/upload', {
+        method: 'POST',
+        body: formData
+      });
+      
+      if (!uploadResponse.ok) {
+        const error = await uploadResponse.json();
+        throw new Error(error.error || 'Failed to upload blog');
+      }
+      
+      // Create blog in database
+      const createResponse = await fetch('/api/blogs', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(metadata)
+      });
+      
+      if (!createResponse.ok) {
+        const error = await createResponse.json();
+        throw new Error(error.error || 'Failed to create blog in database');
+      }
+      
+      const newBlog = await createResponse.json();
+      
+      // Add the new blog to the state
+      setBlogs(prev => [newBlog, ...prev]);
+      
+      // Reset form
+      setBlogFormData({
+        title: "",
+        slug: "",
+        date: "",
+        tags: "",
+        description: "",
+        ogImage: ""
+      });
+      setSelectedFile(null);
+      setShowBlogForm(false);
+      setUploadMessage("Blog post created successfully!");
+      
+      // Refresh blog list
+      fetchBlogs();
+    } catch (error) {
+      console.error("Error creating blog:", error);
+      setUploadMessage(`Error: ${error instanceof Error ? error.message : 'Failed to create blog'}`);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  // New function to handle blog update
+  const handleUpdateBlog = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!editingBlog) return;
+    
+    try {
+      setIsUploading(true);
+      
+      const updateData = {
+        id: editingBlog.id,
+        title: blogFormData.title,
+        slug: blogFormData.slug,
+        date: blogFormData.date,
+        tags: blogFormData.tags.split(',').map(tag => tag.trim()).filter(tag => tag),
+        description: blogFormData.description,
+        ogImage: blogFormData.ogImage
+      };
+      
+      // Update blog in database
+      const updateResponse = await fetch('/api/blogs', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(updateData)
+      });
+      
+      if (!updateResponse.ok) {
+        const error = await updateResponse.json();
+        throw new Error(error.error || 'Failed to update blog');
+      }
+      
+      const updatedBlog = await updateResponse.json();
+      
+      // Update the blog in the state
+      setBlogs(prev => prev.map(blog => 
+        blog.id === updatedBlog.id ? updatedBlog : blog
+      ));
+      
+      // Reset form
+      setBlogFormData({
+        title: "",
+        slug: "",
+        date: "",
+        tags: "",
+        description: "",
+        ogImage: ""
+      });
+      setEditingBlog(null);
+      setShowBlogForm(false);
+      setUploadMessage("Blog post updated successfully!");
+      
+      // Refresh blog list
+      fetchBlogs();
+    } catch (error) {
+      console.error("Error updating blog:", error);
+      setUploadMessage(`Error: ${error instanceof Error ? error.message : 'Failed to update blog'}`);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  // New function to handle blog deletion
+  const handleDeleteBlog = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this blog post?")) {
+      return;
+    }
+    
+    try {
+      const response = await fetch(`/api/blogs?id=${id}`, {
+        method: 'DELETE'
+      });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to delete blog');
+      }
+      
+      // Remove the blog from the state
+      setBlogs(prev => prev.filter(blog => blog.id !== id));
+      setUploadMessage("Blog post deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting blog:", error);
+      setUploadMessage(`Error: ${error instanceof Error ? error.message : 'Failed to delete blog'}`);
+    }
+  };
+
+  // New function to start editing a blog
+  const startEditBlog = (blog: Blog) => {
+    setEditingBlog(blog);
+    setBlogFormData({
+      title: blog.title,
+      slug: blog.slug,
+      date: blog.date,
+      tags: blog.tags.join(', '),
+      description: blog.description,
+      ogImage: blog.ogImage || ''
+    });
+    setShowBlogForm(true);
+  };
+
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-6 text-[#462d22]">پنل مدیریت جلسات</h1>
@@ -330,6 +597,7 @@ export default function AdminDashboard() {
         <TabsList className="mb-6">
           <TabsTrigger value="appointments">مدیریت جلسات</TabsTrigger>
           <TabsTrigger value="bookings">رزروهای ثبت شده</TabsTrigger>
+          <TabsTrigger value="blogs">مدیریت وبلاگ</TabsTrigger>
         </TabsList>
         
         <TabsContent value="appointments">
@@ -739,6 +1007,260 @@ export default function AdminDashboard() {
                   </div>
                 );
               })}
+            </div>
+          )}
+        </TabsContent>
+        
+        <TabsContent value="blogs">
+          <div className="mb-4 flex justify-between items-center">
+            <h2 className="text-xl font-semibold text-[#462d22]">مدیریت مقالات وبلاگ</h2>
+            <div className="flex space-x-2">
+              <Button 
+                onClick={fetchBlogs}
+                className="bg-gray-100 text-gray-800 px-3 py-2 rounded-lg hover:bg-gray-200 ml-2"
+              >
+                <RefreshCw className="h-4 w-4" />
+              </Button>
+              
+              <Button 
+                onClick={() => {
+                  setShowBlogForm(true);
+                  setEditingBlog(null);
+                  setBlogFormData({
+                    title: "",
+                    slug: "",
+                    date: new Date().toISOString().split('T')[0],
+                    tags: "",
+                    description: "",
+                    ogImage: ""
+                  });
+                  setSelectedFile(null);
+                }}
+                className="bg-[#fbeee0] border-2 border-[#422800] rounded-[30px] shadow-[4px_4px_0_0_#422800] text-[#422800] cursor-pointer font-semibold px-4 py-2 text-center no-underline select-none hover:bg-white active:shadow-[2px_2px_0_0_#422800] active:translate-y-[2px]"
+              >
+                <Plus className="ml-2 h-4 w-4" /> افزودن مقاله جدید
+              </Button>
+            </div>
+          </div>
+          
+          {uploadMessage && (
+            <div className={`mb-4 p-3 rounded-lg ${
+              uploadMessage.includes('Error') 
+                ? 'bg-red-100 text-red-800' 
+                : 'bg-green-100 text-green-800'
+            }`}>
+              {uploadMessage}
+            </div>
+          )}
+          
+          {showBlogForm && (
+            <div className="mb-6 p-4 border border-[#462d22]/20 rounded-lg">
+              <h3 className="text-lg font-medium mb-4 text-[#462d22]">
+                {editingBlog ? "ویرایش مقاله" : "افزودن مقاله جدید"}
+              </h3>
+              
+              <form onSubmit={editingBlog ? handleUpdateBlog : handleCreateBlog}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label htmlFor="title" className="block text-sm font-medium text-[#462d22] mb-1">عنوان</label>
+                    <input
+                      type="text"
+                      id="title"
+                      name="title"
+                      value={blogFormData.title}
+                      onChange={handleBlogInputChange}
+                      required
+                      className="w-full p-2 border border-[#462d22]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ffa620] focus:border-transparent"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label htmlFor="slug" className="block text-sm font-medium text-[#462d22] mb-1">اسلاگ (URL)</label>
+                    <input
+                      type="text"
+                      id="slug"
+                      name="slug"
+                      value={blogFormData.slug}
+                      onChange={handleBlogInputChange}
+                      required
+                      className="w-full p-2 border border-[#462d22]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ffa620] focus:border-transparent"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label htmlFor="date" className="block text-sm font-medium text-[#462d22] mb-1">تاریخ</label>
+                    <input
+                      type="date"
+                      id="date"
+                      name="date"
+                      value={blogFormData.date}
+                      onChange={handleBlogInputChange}
+                      required
+                      className="w-full p-2 border border-[#462d22]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ffa620] focus:border-transparent"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label htmlFor="tags" className="block text-sm font-medium text-[#462d22] mb-1">تگ‌ها (با کاما جدا کنید)</label>
+                    <input
+                      type="text"
+                      id="tags"
+                      name="tags"
+                      value={blogFormData.tags}
+                      onChange={handleBlogInputChange}
+                      className="w-full p-2 border border-[#462d22]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ffa620] focus:border-transparent"
+                      placeholder="react, next.js, mongodb"
+                    />
+                  </div>
+                  
+                  <div className="md:col-span-2">
+                    <label htmlFor="description" className="block text-sm font-medium text-[#462d22] mb-1">توضیحات</label>
+                    <textarea
+                      id="description"
+                      name="description"
+                      value={blogFormData.description}
+                      onChange={handleBlogInputChange}
+                      required
+                      rows={3}
+                      className="w-full p-2 border border-[#462d22]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ffa620] focus:border-transparent"
+                    />
+                  </div>
+                  
+                  <div className="md:col-span-2">
+                    <label htmlFor="ogImage" className="block text-sm font-medium text-[#462d22] mb-1">تصویر Open Graph (URL)</label>
+                    <input
+                      type="text"
+                      id="ogImage"
+                      name="ogImage"
+                      value={blogFormData.ogImage}
+                      onChange={handleBlogInputChange}
+                      placeholder="https://example.com/images/my-og-image.jpg"
+                      className="w-full p-2 border border-[#462d22]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ffa620] focus:border-transparent"
+                    />
+                    <p className="mt-1 text-sm text-gray-500">تصویری برای اشتراک‌گذاری در شبکه‌های اجتماعی (اندازه پیشنهادی: 1200×630 پیکسل)</p>
+                  </div>
+                  
+                  {!editingBlog && (
+                    <div className="md:col-span-2">
+                      <label htmlFor="mdFile" className="block text-sm font-medium text-[#462d22] mb-1">فایل Markdown (.md)</label>
+                      <input
+                        type="file"
+                        id="mdFile"
+                        onChange={handleFileChange}
+                        accept=".md"
+                        className="w-full p-2 border border-[#462d22]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ffa620] focus:border-transparent"
+                      />
+                      <p className="mt-1 text-sm text-gray-500">فقط فایل‌های با پسوند .md پذیرفته می‌شوند</p>
+                    </div>
+                  )}
+                </div>
+                
+                <div className="mt-4 flex justify-end space-x-2">
+                  <Button 
+                    type="button"
+                    onClick={() => {
+                      setShowBlogForm(false);
+                      setEditingBlog(null);
+                      setSelectedFile(null);
+                    }}
+                    className="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 ml-2"
+                  >
+                    انصراف
+                  </Button>
+                  
+                  <Button 
+                    type="submit"
+                    disabled={isUploading || (!editingBlog && !selectedFile)}
+                    className={`${
+                      isUploading || (!editingBlog && !selectedFile)
+                        ? 'bg-gray-300 cursor-not-allowed'
+                        : 'bg-[#fbeee0] border-2 border-[#422800] shadow-[4px_4px_0_0_#422800] hover:bg-white active:shadow-[2px_2px_0_0_#422800] active:translate-y-[2px]'
+                    } rounded-[30px] text-[#422800] font-semibold px-4 py-2 text-center no-underline select-none`}
+                  >
+                    {isUploading ? (
+                      <>
+                        <Loader2 className="inline h-4 w-4 animate-spin ml-2" />
+                        در حال بارگذاری...
+                      </>
+                    ) : (
+                      editingBlog ? "بروزرسانی" : "ایجاد"
+                    )}
+                  </Button>
+                </div>
+              </form>
+            </div>
+          )}
+          
+          {blogLoading ? (
+            <div className="text-center py-8">
+              <Loader2 className="h-8 w-8 animate-spin mx-auto text-[#ffa620]" />
+              <p className="mt-2 text-[#462d22]">در حال بارگذاری...</p>
+            </div>
+          ) : blogs.length === 0 ? (
+            <div className="text-center py-8 border border-dashed border-[#462d22]/30 rounded-lg">
+              <p className="text-[#462d22]/70">هیچ مقاله‌ای یافت نشد. مقاله جدیدی ایجاد کنید.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-4">
+              {blogs.map((blog) => (
+                <div key={blog.id} className="border border-[#462d22]/20 rounded-lg p-4 bg-[#fff6e8ec] backdrop-blur-sm">
+                  <div className="flex flex-col md:flex-row md:justify-between md:items-start">
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-[#462d22] text-lg">{blog.title}</h3>
+                      <div className="flex items-center mt-1">
+                        <Calendar className="h-4 w-4 text-[#ffa620] ml-1" />
+                        <span className="text-sm text-[#462d22]/70">{blog.date}</span>
+                      </div>
+                      <div className="flex items-center mt-1">
+                        <FileText className="h-4 w-4 text-[#ffa620] ml-1" />
+                        <span className="text-sm text-[#462d22]/70">{blog.slug}.md</span>
+                      </div>
+                      
+                      <p className="mt-3 text-[#462d22]/80">{blog.description}</p>
+                      
+                      {blog.tags && blog.tags.length > 0 && (
+                        <div className="mt-3">
+                          <div className="flex items-center mb-1">
+                            <Tag className="h-4 w-4 text-[#ffa620] ml-1" />
+                            <span className="text-sm font-medium text-[#462d22]">تگ‌ها:</span>
+                          </div>
+                          <div className="flex flex-wrap gap-2">
+                            {blog.tags.map((tag, index) => (
+                              <span 
+                                key={index}
+                                className="bg-[#ffa620]/10 text-[#462d22] text-xs px-2 py-1 rounded-full"
+                              >
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div className="mt-3 md:mt-0 flex md:flex-col space-x-2 md:space-x-0 md:space-y-2">
+                      <Button
+                        onClick={() => startEditBlog(blog)}
+                        className="p-2 rounded bg-blue-100 text-blue-700 hover:bg-blue-200 ml-2 md:ml-0"
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      
+                      <Button
+                        onClick={() => handleDeleteBlog(blog.id)}
+                        className="p-2 rounded bg-red-100 text-red-700 hover:bg-red-200"
+                      >
+                        <Trash className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-3 text-xs text-[#462d22]/50 flex justify-between">
+                    <div>ایجاد: {new Date(blog.createdAt).toLocaleDateString('fa-IR')}</div>
+                    <div>بروزرسانی: {new Date(blog.updatedAt).toLocaleDateString('fa-IR')}</div>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </TabsContent>

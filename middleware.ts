@@ -25,7 +25,7 @@ export function middleware(request: NextRequest) {
   }
   
   // For API routes that need admin protection
-  if (path.startsWith("/api/appointments") || path.startsWith("/api/bookings")) {
+  if (path.startsWith("/api/appointments") || path.startsWith("/api/bookings") || path.startsWith("/api/blogs")) {
     // For GET requests to /api/appointments, we allow public access
     if (path === "/api/appointments" && request.method === "GET") {
       return NextResponse.next();
@@ -33,6 +33,11 @@ export function middleware(request: NextRequest) {
     
     // For POST requests to /api/bookings, we allow public access
     if (path === "/api/bookings" && request.method === "POST") {
+      return NextResponse.next();
+    }
+    
+    // For GET requests to /api/blogs or its subroutes, we allow public access
+    if ((path === "/api/blogs" || path.startsWith("/api/blogs/")) && request.method === "GET") {
       return NextResponse.next();
     }
     
@@ -55,5 +60,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/api/appointments/:path*", "/api/bookings/:path*"],
+  matcher: ["/admin/:path*", "/api/appointments/:path*", "/api/bookings/:path*", "/api/blogs/:path*"],
 }; 
