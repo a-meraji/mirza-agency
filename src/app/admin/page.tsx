@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { format } from "date-fns-jalali";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/UI/tabs";
 import { Button } from "@/components/UI/button";
@@ -12,7 +11,6 @@ import {
   Edit, 
   Trash, 
   Loader2,
-  User,
   Mail,
   Phone
 } from "lucide-react";
@@ -44,7 +42,6 @@ interface Appointment {
 }
 
 export default function AdminDashboard() {
-  const router = useRouter();
   const [activeTab, setActiveTab] = useState("appointments");
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);

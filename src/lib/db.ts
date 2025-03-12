@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 // Global is used here to maintain a cached connection across hot reloads
 declare global {
-  var mongooseConnection: {
+  let mongooseConnection: {
     conn: typeof mongoose | null;
     promise: Promise<typeof mongoose> | null;
     isConnecting: boolean;

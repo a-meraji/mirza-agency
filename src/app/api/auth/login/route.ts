@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { compare } from "bcrypt";
 import { sign } from "jsonwebtoken";
-import { db } from "@/app/lib/models";
+import { db } from "@/lib/models";
 import mongoose from "mongoose";
-import { DatabaseService } from "@/app/lib/services/database";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { DatabaseService } from "@/lib/services/database";
 
 export async function POST(req: NextRequest) {
   try {

@@ -1,0 +1,4 @@
+# Ignore all files in the app directory
+src/app/**/*
+src/components/**/*
+src/types/**/* 

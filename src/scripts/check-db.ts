@@ -5,10 +5,10 @@
  * what our models expect. It can be run to debug connection or schema issues.
  */
 
-import dbConnect from '../app/lib/mongodb';
+import dbConnect from '../lib/mongodb';
 import mongoose from 'mongoose';
-import { availableAppointmentModel } from '../app/lib/models/availableAppointment';
-import { bookingModel } from '../app/lib/models/booking';
+import { availableAppointmentModel } from '../lib/models/availableAppointment';
+import { bookingModel } from '../lib/models/booking';
 
 async function validateDatabase() {
   console.log('Starting database validation...');

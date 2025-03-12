@@ -8,7 +8,7 @@ import {
   DrawerTrigger,
 } from "@/components/UI/drawer";
 import { services } from "@/lib/data";
-import { format } from "date-fns-jalali";
+import { format } from "date-fns";
 import fa from "date-fns/locale/fa-IR";
 import { ChevronRight, ChevronLeft, Calendar, Clock, Loader2 } from "lucide-react";
 
@@ -32,6 +32,7 @@ interface TimeSelectionProps {
   setSelectedSlot: (slot: TimeSlot) => void;
   goToPrevStep: () => void;
   goToNextStep: () => void;
+  isLoading: boolean;
 }
 
 interface FormData {
@@ -84,7 +85,7 @@ const ServiceSelection = ({ selectedOptions, handleOptionClick, goToNextStep }: 
   </div>
 );
 
-const TimeSelection = ({ availableSlots, selectedSlot, setSelectedSlot, goToPrevStep, goToNextStep }: TimeSelectionProps) => {
+const TimeSelection = ({ availableSlots, selectedSlot, setSelectedSlot, goToPrevStep, goToNextStep, isLoading }: TimeSelectionProps) => {
   const [groupedSlots, setGroupedSlots] = useState<Record<string, TimeSlot[]>>({});
   
   useEffect(() => {
@@ -102,13 +103,13 @@ const TimeSelection = ({ availableSlots, selectedSlot, setSelectedSlot, goToPrev
   }, [availableSlots]);
   
   return (
-    <div className="p-4">
-      <h3 className="text-lg font-semibold mb-4 text-[#462d22]">انتخاب زمان جلسه</h3>
+    <div className="flex flex-col space-y-4">
+      <h2 className="text-2xl font-semibold mb-4 text-right">زمان ملاقات را انتخاب کنید</h2>
       
-      {Object.keys(groupedSlots).length === 0 ? (
-        <div className="text-center py-8">
-          <Loader2 className="h-8 w-8 animate-spin mx-auto text-[#ffa620]" />
-          <p className="mt-2 text-[#462d22]">در حال بارگذاری زمان‌های موجود...</p>
+      {isLoading ? (
+        <div className="flex justify-center items-center py-8">
+          <Loader2 className="animate-spin h-8 w-8" />
+          <span className="mr-2">در حال بارگذاری...</span>
         </div>
       ) : (
         <div className="space-y-6">
@@ -122,7 +123,7 @@ const TimeSelection = ({ availableSlots, selectedSlot, setSelectedSlot, goToPrev
               </div>
               
               <div className="grid grid-cols-3 gap-2">
-                {slots.map((slot: TimeSlot, idx: number) => {
+                {slots.map((slot: TimeSlot) => {
                   const startTime = new Date(slot.startTime);
                   const endTime = new Date(slot.endTime);
                   const isSelected = selectedSlot && selectedSlot.id === slot.id;
@@ -180,7 +181,7 @@ const ContactForm = ({ formData, setFormData, goToPrevStep, handleSubmit, isSubm
       
       <form className="space-y-4" onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="name" className="block text-sm font-medium text-[#462d22] mb-1">نام و نام خانوادگی</label>
+          <label htmlFor="name" className="block text-sm font-medium text-[#462d22] mb-1">نام و نام خانوادگی*</label>
           <input
             type="text"
             id="name"
@@ -193,7 +194,7 @@ const ContactForm = ({ formData, setFormData, goToPrevStep, handleSubmit, isSubm
         </div>
         
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-[#462d22] mb-1">ایمیل</label>
+          <label htmlFor="email" className="block text-sm font-medium text-[#462d22] mb-1">ایمیل*</label>
           <input
             type="email"
             id="email"
@@ -206,13 +207,14 @@ const ContactForm = ({ formData, setFormData, goToPrevStep, handleSubmit, isSubm
         </div>
         
         <div>
-          <label htmlFor="phone" className="block text-sm font-medium text-[#462d22] mb-1">شماره تماس</label>
+          <label htmlFor="phone" className="block text-sm font-medium text-[#462d22] mb-1">شماره تماس*</label>
           <input
             type="tel"
             id="phone"
             name="phone"
             value={formData.phone}
             onChange={handleChange}
+            required
             className="w-full p-3 border border-[#462d22]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ffa620] focus:border-transparent"
           />
         </div>
@@ -240,7 +242,7 @@ const ContactForm = ({ formData, setFormData, goToPrevStep, handleSubmit, isSubm
           
           <Button 
             type="submit"
-            disabled={isSubmitting || !formData.name || !formData.email}
+            disabled={isSubmitting || !formData.name || !formData.email || !formData.phone}
             className="bg-[#fbeee0] border-2 border-[#422800] rounded-[30px] shadow-[4px_4px_0_0_#422800] text-[#422800] cursor-pointer font-semibold text-[18px] px-[18px] leading-[50px] text-center no-underline select-none hover:bg-white active:shadow-[2px_2px_0_0_#422800] active:translate-y-[2px]"
           >
             {isSubmitting ? (
@@ -447,12 +449,13 @@ md:px-[25px]">
             )}
             
             {currentStep === 2 && (
-              <TimeSelection 
+              <TimeSelection
                 availableSlots={availableSlots}
                 selectedSlot={selectedSlot}
                 setSelectedSlot={setSelectedSlot}
                 goToPrevStep={goToPrevStep}
                 goToNextStep={goToNextStep}
+                isLoading={isLoading}
               />
             )}
             

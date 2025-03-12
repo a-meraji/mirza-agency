@@ -11,7 +11,13 @@ const MONGODB_URI = process.env.DATABASE_URL;
  * in development. This prevents connections growing exponentially
  * during API Route usage.
  */
-let cached = global as any;
+const cached: {
+  mongoose: {
+    conn: typeof mongoose | null;
+    promise: Promise<typeof mongoose> | null;
+    isConnecting: boolean;
+  }
+} = global as any;
 
 if (!cached.mongoose) {
   cached.mongoose = { conn: null, promise: null, isConnecting: false };
@@ -123,3 +129,16 @@ async function dbConnect() {
 }
 
 export default dbConnect; 
+
+/**
+ * Get a MongoDB collection by name
+ * @param collectionName The name of the collection to access
+ * @returns The MongoDB collection
+ */
+export async function getCollection(collectionName: string) {
+  await dbConnect();
+  if (!mongoose.connection.db) {
+    throw new Error('Database connection not established');
+  }
+  return mongoose.connection.db.collection(collectionName);
+} 

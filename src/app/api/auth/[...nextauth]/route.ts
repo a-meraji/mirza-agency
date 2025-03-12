@@ -3,8 +3,8 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { compare } from "bcrypt";
 import { JWT } from "next-auth/jwt";
 import { Session } from "next-auth";
-import { db } from "@/app/lib/models";
-import { DatabaseService } from "@/app/lib/services/database";
+import { db } from "@/lib/models";
+import { DatabaseService } from "@/lib/services/database";
 
 // Extend the Session type to include the role property
 declare module "next-auth" {

@@ -30,10 +30,12 @@ export {
   userModel
 };
 
-// Default export
-export default {
+// Default export with named variable
+const models = {
   availableAppointmentModel,
   bookingModel,
   userModel,
   db
-}; 
+};
+
+export default models; 

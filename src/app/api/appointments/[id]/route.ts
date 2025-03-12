@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import { db } from "@/app/lib/models";
-import { connectToDatabase } from "@/app/lib/db";
+import { db } from "@/lib/models";
+import { connectToDatabase } from "@/lib/db";
 
 // Helper function to handle errors consistently
 function handleApiError(error: any, operation: string) {
@@ -17,14 +17,13 @@ function handleApiError(error: any, operation: string) {
 // GET a specific appointment by ID
 export async function GET(
   req: NextRequest, 
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
   try {
     // Ensure database connection is established
     await connectToDatabase();
     
-    // Properly await and extract the ID parameter
-    const params = context.params;
+    // Extract the ID parameter
     const id = params.id;
     
     if (!id) {
@@ -54,14 +53,13 @@ export async function GET(
 // PUT to update an appointment (admin only)
 export async function PUT(
   req: NextRequest, 
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
   try {
     // Ensure database connection is established
     await connectToDatabase();
     
-    // Properly await and extract the ID parameter
-    const params = context.params;
+    // Extract the ID parameter
     const id = params.id;
     
     if (!id) {
@@ -111,14 +109,13 @@ export async function PUT(
 // DELETE an appointment (admin only)
 export async function DELETE(
   req: NextRequest, 
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
   try {
     // Ensure database connection is established
     await connectToDatabase();
     
-    // Properly await and extract the ID parameter
-    const params = context.params;
+    // Extract the ID parameter
     const id = params.id;
     
     if (!id) {

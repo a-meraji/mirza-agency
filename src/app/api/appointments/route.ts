@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import { db } from "@/app/lib/models";
-import dbConnect from "@/app/lib/mongodb";
+import { db } from "@/lib/models";
+import dbConnect from "@/lib/mongodb";
 import mongoose from "mongoose";
 
 // Helper function to retry database operations

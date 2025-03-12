@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { db } from "@/app/lib/models";
-import { getCollection } from "@/app/lib/mongodb";
+import { getCollection } from "@/lib/mongodb";
 
 export async function GET() {
   try {
@@ -10,7 +9,7 @@ export async function GET() {
     }
     
     // Delete all users using the collection directly for a more efficient operation
-    const userCollection = getCollection('User');
+    const userCollection = await getCollection('User');
     await userCollection.deleteMany({});
     
     return NextResponse.json({ message: "Database cleaned up successfully" });

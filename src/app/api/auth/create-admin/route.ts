@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { hash } from "bcrypt";
-import { db } from "@/app/lib/models";
+import { db } from "@/lib/models";
 
 export async function GET() {
   try {

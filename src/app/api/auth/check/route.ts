@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
       } else {
         return NextResponse.json({ authenticated: false });
       }
-    } catch (error) {
+    } catch {
       // Invalid token
       return NextResponse.json({ authenticated: false });
     }
