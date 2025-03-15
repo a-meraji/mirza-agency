@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mirza Chat Demo</title>
+</head>
+<body>
+    <!-- Your page content goes here -->
+
+    <!-- Mirza Chat Widget -->
+    <script src="https://cdn.jsdelivr.net/npm/mirza-ai-chatbox@1.0.1/dist/mirza-chat-box.js"></script>
+    <script>
+        window.addEventListener('DOMContentLoaded', function() {
+            MirzaChat.init({
+                apiUrl: 'http://localhost:8000/',
+                websiteId: '655aac0e-d812-42d3-ae19-11cdb47cba7b',
+                primaryColor: '#0066FF', 
+                companyName: 'Mirza Chat Demo'
+            });
+        });
+    </script>
+</body>
+</html>

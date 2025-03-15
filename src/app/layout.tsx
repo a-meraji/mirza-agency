@@ -5,6 +5,7 @@ import Navbar from "@/components/Nabar/Navbar";
 import ContactUs from "@/components/UI/ContactUs";
 import SmoothScroll from "@/components/SmoothScroll";
 import Footer from "@/components/UI/Footer";
+import ChatWidget from "@/components/ChatWidget";
 
 const IRANSansWeb = localFont({
   src: [
@@ -73,6 +74,9 @@ export default function RootLayout({
           {children}
           <ContactUs />
           <Footer />
+          
+          {/* Mirza Chat Widget */}
+          <ChatWidget />
       </body>
     </html>
   );
