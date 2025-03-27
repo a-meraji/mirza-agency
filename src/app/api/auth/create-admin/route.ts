@@ -5,9 +5,7 @@ import { db } from "@/lib/models";
 export async function GET() {
   try {
     // Check if admin already exists
-    const existingAdmin = await db.user.findUnique({
-      where: { email: "admin@mirza.agency" }
-    });
+    const existingAdmin = await db.user.findByEmail("admin@mirza.agency");
 
     if (existingAdmin) {
       return NextResponse.json({ message: "Admin user already exists" }, { status: 200 });
@@ -28,6 +26,6 @@ export async function GET() {
     return NextResponse.json({ message: "Admin user created successfully", email: admin.email }, { status: 201 });
   } catch (error) {
     console.error("Error creating admin user:", error);
-    return NextResponse.json({ error: "Failed to create admin user" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to create admin user", details: error instanceof Error ? error.message : String(error) }, { status: 500 });
   }
 } 

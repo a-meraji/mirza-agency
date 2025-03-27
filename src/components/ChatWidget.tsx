@@ -19,6 +19,9 @@ interface MirzaChatConfig {
   websiteId: string;
   primaryColor: string;
   companyName: string;
+  secondaryColor?: string;
+  position?: string;
+  initialMessage?: string;
   debug?: boolean;
 }
 
@@ -26,10 +29,13 @@ export default function ChatWidget() {
   const handleScriptLoad = () => {
     // Default configuration
     const config: MirzaChatConfig = {
-      apiUrl: 'http://localhost:8000',
-      websiteId: '655aac0e-d812-42d3-ae19-11cdb47cba7b',
-      primaryColor: '#ffa620',
-      companyName: 'Mirza Agency',
+        companyName: "آژانس میرزا",
+        apiUrl: 'http://localhost:8000',
+        websiteId: "655aac0e-d812-42d3-ae19-11cdb47cba7b",
+        primaryColor: "#ffa620",
+        secondaryColor: "#42280044",
+        position: "bottom-right",
+        initialMessage: "سلام 😊 من میرزا چت هستم. چطور میتونم کمکتون کنم؟ 🤖",
       debug: true
     };
     
@@ -72,7 +78,7 @@ export default function ChatWidget() {
 
   return (
     <Script 
-      src="https://cdn.jsdelivr.net/npm/mirza-ai-chatbox@1.0.1/dist/mirza-chat-box.js" 
+      src="https://cdn.jsdelivr.net/npm/mirza-ai-chatbox@1.0.5/dist/mirza-chat-box.js" 
       strategy="afterInteractive"
       onLoad={handleScriptLoad}
       onError={() => console.error('Failed to load chat widget script')}

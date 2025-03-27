@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Loader2, Search, Tag, Calendar, ChevronLeft, ChevronRight } from "lucide-react";
@@ -24,7 +24,7 @@ interface Pagination {
   pages: number;
 }
 
-export default function BlogIndexPage() {
+function BlogContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   
@@ -364,5 +364,17 @@ export default function BlogIndexPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function BlogIndexPage() {
+  return (
+    <Suspense fallback={
+      <div className="container mx-auto py-12 px-4 flex justify-center items-center min-h-[300px]">
+        <Loader2 className="h-10 w-10 animate-spin text-[#ffa620]" />
+      </div>
+    }>
+      <BlogContent />
+    </Suspense>
   );
 } 

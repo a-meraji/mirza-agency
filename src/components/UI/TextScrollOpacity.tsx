@@ -11,19 +11,36 @@ export default function Paragraph({paragraph}: {paragraph: string}) {
     offset: ["start 0.9", "start 0.25"]
   })
 
-  const words = paragraph.split(" ")
+  // Split by both \n and literal newlines
+  const lines = paragraph.split(/\\n|\n/)
+  let wordIndex = 0;
+  const totalWords = paragraph.replace(/\\n|\n/g, ' ').replace(/\s+/g, ' ').split(' ').length;
+
   return (
     <p 
       ref={container}         
       className={styles.paragraph}
     >
-    {
-      words.map( (word, i) => {
-        const start = i / words.length
-        const end = start + (1 / words.length)
-        return <Word key={i} progress={scrollYProgress} range={[start, end]}>{word}</Word>
-      })
-    }
+      {lines.map((line, lineIndex) => {
+        const words = line.trim().split(" ").filter(word => word.length > 0);
+        
+        return (
+          <div key={lineIndex} className={styles.line}>
+            {words.map((word) => {
+              const start = wordIndex / totalWords;
+              const end = start + (1 / totalWords);
+              wordIndex++;
+              return <Word 
+                key={`${lineIndex}-${wordIndex}`} 
+                progress={scrollYProgress} 
+                range={[start, end]}
+              >
+                {word}
+              </Word>
+            })}
+          </div>
+        );
+      })}
     </p>
   )
 }

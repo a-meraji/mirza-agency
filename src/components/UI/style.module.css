@@ -2,16 +2,24 @@
     display: flex;
     font-size: 1.4rem;
     font-weight: 500;
-    line-height: 1;
+
     padding: 40px;
     max-width: 1280px;
-    flex-wrap: wrap;
-   
+    flex-direction: column;
+    gap: 1rem;
   }
+
+  .line {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    line-height: 1;
+  }
+
   .word{
     position: relative;
     margin-right: 8px;
-    margin-top: 11px;
+    margin-top: 8px;
     .shadow{
       position: absolute;
       opacity: 20%;

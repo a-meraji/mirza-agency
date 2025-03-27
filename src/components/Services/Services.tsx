@@ -69,17 +69,23 @@ const icons = [
   </AnimatedIcon>,
     <AnimatedIcon key="icon-2">
     {(scrollYProgress, pathLength, opacity) => {
-      // Create custom animation timing for different parts of the headset
-      const headsetMainPath = useTransform(
+      // Create custom animation timing for different parts
+      const calendarFrame = useTransform(
         scrollYProgress,
-        [0, 0.3, 0.6, 1],
-        [0, 0.5, 0.9, 1]
+        [0, 0.3, 0.5],
+        [0, 0.6, 1]
       );
       
-      const headsetCordPath = useTransform(
+      const calendarLines = useTransform(
         scrollYProgress,
-        [0.2, 0.5, 0.8, 1],
-        [0, 0.4, 0.8, 1]
+        [0.15, 0.35, 0.5],
+        [0, 0.7, 1]
+      );
+
+      const syncArrows = useTransform(
+        scrollYProgress,
+        [0.25, 0.4, 0.5],
+        [0, 0.8, 1]
       );
       
       return (
@@ -93,19 +99,63 @@ const icons = [
           strokeLinecap="round"
           strokeLinejoin="round"
         >
-          {/* Main headset body - animated with custom timing */}
+          {/* Calendar frame */}
           <motion.path
-            d="M3 11h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5Zm0 0a9 9 0 1 1 18 0m0 0v5a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3Z"
+            d="M21 8.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h4.3"
             style={{
-              pathLength: headsetMainPath,
+              pathLength: calendarFrame,
               opacity,
             }}
           />
-          {/* Cord part - animated with slightly delayed timing */}
+          {/* Calendar vertical lines */}
           <motion.path
-            d="M21 16v2a4 4 0 0 1-4 4h-5"
+            d="M16 2v4"
             style={{
-              pathLength: headsetCordPath,
+              pathLength: calendarLines,
+              opacity,
+            }}
+          />
+          <motion.path
+            d="M8 2v4"
+            style={{
+              pathLength: calendarLines,
+              opacity,
+            }}
+          />
+          <motion.path
+            d="M3 10h4"
+            style={{
+              pathLength: calendarLines,
+              opacity,
+            }}
+          />
+
+          {/* Sync arrows and clock */}
+          <motion.path
+            d="M11 10v4h4"
+            style={{
+              pathLength: syncArrows,
+              opacity,
+            }}
+          />
+          <motion.path
+            d="m11 14 1.535-1.605a5 5 0 0 1 8 1.5"
+            style={{
+              pathLength: syncArrows,
+              opacity,
+            }}
+          />
+          <motion.path
+            d="m21 18-1.535 1.605a5 5 0 0 1-8-1.5"
+            style={{
+              pathLength: syncArrows,
+              opacity,
+            }}
+          />
+          <motion.path
+            d="M21 22v-4h-4"
+            style={{
+              pathLength: syncArrows,
               opacity,
             }}
           />
