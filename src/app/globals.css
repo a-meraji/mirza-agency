@@ -2,6 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Font utilities */
+.font-iransans {
+  font-family: var(--font-iransans);
+}
+
+.font-akharinkhabar {
+  font-family: var(--font-akharinkhabar);
+}
+
+.font-roboto {
+  font-family: var(--font-roboto);
+}
 
 body {
   font-family: var(--font-iransans), sans-serif;

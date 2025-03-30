@@ -98,13 +98,13 @@ const Hero = () => {
           variants={titleVariants}
           className="text-6xl font-bold mt-4 text-iconic"
         >
-                     تعامل هوشمند با مشتریان
+         اتوماسیون هوشمند کسب و کارها
         </motion.h1>
         <motion.p 
           variants={titleVariants}
           className="mt-6 text-2xl"
         >
-          با چت‌بات‌ های هوشمند و دستیارهای مجازی میرزا
+          افزایش بهره وری و کاهش هزینه ها
         </motion.p>
       </motion.div>
 

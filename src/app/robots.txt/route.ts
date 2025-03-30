@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 export function GET() {
   // Get the site URL from environment variables or use a default
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://your-domain.com';
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://mirza.solutions';
   
   // Create robots.txt content
   const robotsTxt = `

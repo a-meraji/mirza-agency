@@ -7,7 +7,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   
   // Create sitemap entries for blog posts
   const blogEntries = blogs.map((blog) => ({
-    url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://your-domain.com'}/blog/${blog.slug}`,
+    url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://mirza.solutions'}/blog/${blog.slug}`,
     lastModified: new Date(),
     changeFrequency: 'weekly' as const,
     priority: 0.8,
@@ -20,7 +20,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/privacy-policy',
     '/terms-of-service',
   ].map((route) => ({
-    url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://your-domain.com'}${route}`,
+    url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://mirza.solutions'}${route}`,
     lastModified: new Date(),
     changeFrequency: 'monthly' as const,
     priority: route === '' ? 1.0 : 0.7,
