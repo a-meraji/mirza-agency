@@ -7,15 +7,15 @@ const Footer = () => {
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="mb-4 md:mb-0">
-            <p>© {new Date().getFullYear()} آژانس هوش مصنوعی میرزا. تمامی حقوق محفوظ است.</p>
+            <p>Mirza AI Automation.  All right reserved © {new Date().getFullYear()}</p>
           </div>
           <div className="flex space-x-4 rtl:space-x-reverse">
             <Link href="/privacy-policy" className="hover:text-white transition-colors">
-              سیاست حفظ حریم خصوصی
+              Privacy policy
             </Link>
             <span className="text-white mx-2">|</span>
             <Link href="/terms-of-service" className="hover:text-white transition-colors">
-              شرایط استفاده از خدمات
+              Terms of service
             </Link>
           </div>
         </div>

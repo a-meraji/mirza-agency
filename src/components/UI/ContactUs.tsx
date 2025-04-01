@@ -7,10 +7,11 @@ import {
   DrawerHeader,
   DrawerTrigger,
 } from "@/components/UI/drawer";
-import { services } from "@/lib/data";
+import { servicesFa, servicesEn    } from "@/lib/data";
 import { format } from "date-fns";
 import fa from "date-fns/locale/fa-IR";
 import { ChevronRight, ChevronLeft, Calendar, Clock, Loader2 } from "lucide-react";
+import useSubdomain from "@/hooks/useSubdomain";
 
 // Define types for the components
 interface ServiceSelectionProps {
@@ -55,7 +56,10 @@ interface SuccessMessageProps {
 }
 
 // Step components
-const ServiceSelection = ({ selectedOptions, handleOptionClick, goToNextStep }: ServiceSelectionProps) => (
+const ServiceSelection = ({ selectedOptions, handleOptionClick, goToNextStep }: ServiceSelectionProps) => {
+  const { hasFaSubdomain } = useSubdomain();
+  const services = hasFaSubdomain? servicesFa: servicesEn;
+  return (
   <div className="p-4">
     <div className="grid grid-cols-2 gap-4">
       {services.map((service, index) => (
@@ -79,18 +83,18 @@ const ServiceSelection = ({ selectedOptions, handleOptionClick, goToNextStep }: 
         disabled={selectedOptions.length === 0}
         className="bg-[#fbeee0] border-2 border-[#422800] rounded-[30px] shadow-[4px_4px_0_0_#422800] text-[#422800] cursor-pointer font-semibold text-[18px] px-[18px] leading-[50px] text-center no-underline select-none hover:bg-white active:shadow-[2px_2px_0_0_#422800] active:translate-y-[2px]"
       >
-        مرحله بعد <ChevronLeft className="mr-2 h-4 w-4" />
+        {hasFaSubdomain?"مرحله بعد":"Next step"} <ChevronLeft className="mr-2 h-4 w-4" />
       </Button>
     </div>
   </div>
-);
+)};
 
 const TimeSelection = ({ availableSlots, selectedSlot, setSelectedSlot, goToPrevStep, goToNextStep, isLoading }: TimeSelectionProps) => {
   const [groupedSlots, setGroupedSlots] = useState<Record<string, TimeSlot[]>>({});
-  
+  const { hasFaSubdomain } = useSubdomain();
   useEffect(() => {
     // Group slots by date
-    const grouped = availableSlots.reduce((acc: Record<string, TimeSlot[]>, slot: TimeSlot) => {
+    const grouped = availableSlots?.reduce((acc: Record<string, TimeSlot[]>, slot: TimeSlot) => {
       const date = new Date(slot.date).toDateString();
       if (!acc[date]) {
         acc[date] = [];
@@ -104,12 +108,12 @@ const TimeSelection = ({ availableSlots, selectedSlot, setSelectedSlot, goToPrev
   
   return (
     <div className="flex flex-col space-y-4">
-      <h2 className="text-2xl font-semibold mb-4 text-right">زمان ملاقات را انتخاب کنید</h2>
+      <h2 className={`text-2xl font-semibold mb-4 ${hasFaSubdomain ? "text-right" : "text-left"}`}>{hasFaSubdomain?"زمان ملاقات را انتخاب کنید":"Select a time for your meeting"}</h2>
       
       {isLoading ? (
         <div className="flex justify-center items-center py-8">
           <Loader2 className="animate-spin h-8 w-8" />
-          <span className="mr-2">در حال بارگذاری...</span>
+          <span className="mr-2">{hasFaSubdomain?"در حال بارگذاری...":"Loading..."}</span>
         </div>
       ) : (
         <div className="space-y-6">
@@ -154,7 +158,7 @@ const TimeSelection = ({ availableSlots, selectedSlot, setSelectedSlot, goToPrev
           onClick={goToPrevStep}
           className="bg-[#fbeee0] border-2 border-[#422800] rounded-[30px] shadow-[4px_4px_0_0_#422800] text-[#422800] cursor-pointer font-semibold text-[18px] px-[18px] leading-[50px] text-center no-underline select-none hover:bg-white active:shadow-[2px_2px_0_0_#422800] active:translate-y-[2px]"
         >
-          <ChevronRight className="ml-2 h-4 w-4" /> مرحله قبل
+          <ChevronRight className="ml-2 h-4 w-4" /> {hasFaSubdomain?"مرحله قبل":"Previous step"}
         </Button>
         
         <Button 
@@ -162,7 +166,7 @@ const TimeSelection = ({ availableSlots, selectedSlot, setSelectedSlot, goToPrev
           disabled={!selectedSlot}
           className="bg-[#fbeee0] border-2 border-[#422800] rounded-[30px] shadow-[4px_4px_0_0_#422800] text-[#422800] cursor-pointer font-semibold text-[18px] px-[18px] leading-[50px] text-center no-underline select-none hover:bg-white active:shadow-[2px_2px_0_0_#422800] active:translate-y-[2px]"
         >
-          مرحله بعد <ChevronLeft className="mr-2 h-4 w-4" />
+          {hasFaSubdomain?"مرحله بعد":"Next step"} <ChevronLeft className="mr-2 h-4 w-4" />
         </Button>
       </div>
     </div>
@@ -174,14 +178,15 @@ const ContactForm = ({ formData, setFormData, goToPrevStep, handleSubmit, isSubm
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
+  const { hasFaSubdomain } = useSubdomain();
   
   return (
     <div className="p-4">
-      <h3 className="text-lg font-semibold mb-4 text-[#462d22]">اطلاعات تماس</h3>
+      <h3 className="text-lg font-semibold mb-4 text-[#462d22]">{hasFaSubdomain?"اطلاعات تماس":"Contact information"}</h3>
       
       <form className="space-y-4" onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="name" className="block text-sm font-medium text-[#462d22] mb-1">نام و نام خانوادگی*</label>
+          <label htmlFor="name" className="block text-sm font-medium text-[#462d22] mb-1">{hasFaSubdomain?"نام و نام خانوادگی":"Name and surname*"}</label>
           <input
             type="text"
             id="name"
@@ -194,7 +199,7 @@ const ContactForm = ({ formData, setFormData, goToPrevStep, handleSubmit, isSubm
         </div>
         
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-[#462d22] mb-1">ایمیل*</label>
+          <label htmlFor="email" className="block text-sm font-medium text-[#462d22] mb-1">{hasFaSubdomain?"ایمیل":"Email*"}</label>
           <input
             type="email"
             id="email"
@@ -207,7 +212,7 @@ const ContactForm = ({ formData, setFormData, goToPrevStep, handleSubmit, isSubm
         </div>
         
         <div>
-          <label htmlFor="phone" className="block text-sm font-medium text-[#462d22] mb-1">شماره تماس*</label>
+          <label htmlFor="phone" className="block text-sm font-medium text-[#462d22] mb-1">{hasFaSubdomain?"شماره تماس":"Phone number*"}</label>
           <input
             type="tel"
             id="phone"
@@ -220,7 +225,7 @@ const ContactForm = ({ formData, setFormData, goToPrevStep, handleSubmit, isSubm
         </div>
         
         <div>
-          <label htmlFor="notes" className="block text-sm font-medium text-[#462d22] mb-1">توضیحات</label>
+          <label htmlFor="notes" className="block text-sm font-medium text-[#462d22] mb-1">{hasFaSubdomain?"توضیحات":"Notes"}</label>
           <textarea
             id="notes"
             name="notes"
@@ -237,7 +242,7 @@ const ContactForm = ({ formData, setFormData, goToPrevStep, handleSubmit, isSubm
             onClick={goToPrevStep}
             className="bg-[#fbeee0] border-2 border-[#422800] rounded-[30px] shadow-[4px_4px_0_0_#422800] text-[#422800] cursor-pointer font-semibold text-[18px] px-[18px] leading-[50px] text-center no-underline select-none hover:bg-white active:shadow-[2px_2px_0_0_#422800] active:translate-y-[2px]"
           >
-            <ChevronRight className="ml-2 h-4 w-4" /> مرحله قبل
+            <ChevronRight className="ml-2 h-4 w-4" /> {hasFaSubdomain?"مرحله قبل":"Previous step"}
           </Button>
           
           <Button 
@@ -248,39 +253,42 @@ const ContactForm = ({ formData, setFormData, goToPrevStep, handleSubmit, isSubm
             {isSubmitting ? (
               <>
                 <Loader2 className="ml-2 h-4 w-4 animate-spin" />
-                در حال ثبت...
+                {hasFaSubdomain ? "در حال ثبت..." : "Submitting..."}
               </>
             ) : (
-              'ثبت جلسه'
+              hasFaSubdomain ? "ثبت جلسه" : "Submit appointment"
             )}
           </Button>
         </div>
       </form>
+    </ div>
+  );
+};
+
+const SuccessMessage = ({ closeDrawer }: SuccessMessageProps) => {
+  const { hasFaSubdomain } = useSubdomain();
+  return (
+    <div className="p-4 text-center">
+      <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+        </svg>
+      </div>
+      
+      <h3 className="text-xl font-bold text-[#462d22] mb-2">{hasFaSubdomain?"جلسه با موفقیت ثبت شد":"Appointment successfully booked"}</h3>
+      <p className="text-[#462d22]/70 mb-6">{hasFaSubdomain?"از انتخاب ما متشکریم. به زودی با شما تماس خواهیم گرفت.":"Thank you for choosing us. We will contact you soon."}</p>
+      
+      <Button 
+        onClick={closeDrawer}
+        className="bg-[#fbeee0] border-2 border-[#422800] rounded-[30px] shadow-[4px_4px_0_0_#422800] text-[#422800] cursor-pointer font-semibold text-[18px] px-[18px] leading-[50px] text-center no-underline select-none hover:bg-white active:shadow-[2px_2px_0_0_#422800] active:translate-y-[2px]"
+      >
+        {hasFaSubdomain?"بستن":"Close"} 
+      </Button>
     </div>
   );
 };
 
-const SuccessMessage = ({ closeDrawer }: SuccessMessageProps) => (
-  <div className="p-4 text-center">
-    <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-      </svg>
-    </div>
-    
-    <h3 className="text-xl font-bold text-[#462d22] mb-2">جلسه با موفقیت ثبت شد</h3>
-    <p className="text-[#462d22]/70 mb-6">از انتخاب ما متشکریم. به زودی با شما تماس خواهیم گرفت.</p>
-    
-    <Button 
-      onClick={closeDrawer}
-      className="bg-[#fbeee0] border-2 border-[#422800] rounded-[30px] shadow-[4px_4px_0_0_#422800] text-[#422800] cursor-pointer font-semibold text-[18px] px-[18px] leading-[50px] text-center no-underline select-none hover:bg-white active:shadow-[2px_2px_0_0_#422800] active:translate-y-[2px]"
-    >
-      بستن
-    </Button>
-  </div>
-);
-
-export default function ContactUs() {
+const ContactUs = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedOptions, setSelectedOptions] = useState<number[]>([]);
@@ -289,6 +297,7 @@ export default function ContactUs() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState(false);
+  const { hasFaSubdomain } = useSubdomain();
   const [formData, setFormData] = useState<FormData>({
     name: '',
     email: '',
@@ -298,23 +307,17 @@ export default function ContactUs() {
 
   const handleOptionClick = (index: number) => {
     setSelectedOptions(prev => {
-      // If the option is already selected, remove it
       if (prev.includes(index)) {
         return prev.filter(item => item !== index);
       } 
-      // Otherwise, add it to the selected options
-      else {
-        return [...prev, index];
-      }
+      return [...prev, index];
     });
   };
 
   const goToNextStep = () => {
     if (currentStep === 1) {
-      // Load available slots when moving to step 2
       fetchAvailableSlots();
     }
-    
     setCurrentStep(prev => prev + 1);
   };
 
@@ -327,7 +330,6 @@ export default function ContactUs() {
       setIsLoading(true);
       const response = await fetch('/api/appointments');
       const data = await response.json();
-      
       setAvailableSlots(data);
     } catch (error) {
       console.error('Error fetching available slots:', error);
@@ -344,7 +346,8 @@ export default function ContactUs() {
     try {
       setIsSubmitting(true);
       
-      const selectedServicesNames = selectedOptions.map(index => services[index].title);
+      const toBeMappedArray = hasFaSubdomain ? servicesFa : servicesEn;
+      const selectedServicesNames = selectedOptions.map(index => toBeMappedArray[index].title);
       
       const response = await fetch('/api/bookings', {
         method: 'POST',
@@ -365,7 +368,6 @@ export default function ContactUs() {
       
       if (data.success) {
         setBookingSuccess(true);
-        // Reset form for next booking
         setFormData({
           name: '',
           email: '',
@@ -384,7 +386,6 @@ export default function ContactUs() {
 
   const closeDrawer = () => {
     setIsOpen(false);
-    // Reset to first step after drawer is closed
     setTimeout(() => {
       setCurrentStep(1);
       setBookingSuccess(false);
@@ -394,33 +395,14 @@ export default function ContactUs() {
   return (
     <Drawer open={isOpen} onOpenChange={setIsOpen}>
       <DrawerTrigger asChild>
-        <Button className="fixed bottom-[8vh] transform -translate-x-1/2 left-1/2
-bg-[#fbeee0]
-border-2
-border-[#422800]
-rounded-[30px]
-shadow-[4px_4px_0_0_#422800]
-text-[#422800]
-cursor-pointer
-font-semibold
-text-[18px]
-px-[18px]
-leading-[50px]
-text-center
-no-underline
-select-none
-hover:bg-white
-active:shadow-[2px_2px_0_0_#422800]
-active:translate-y-[2px]
-md:min-w-[120px]
-md:px-[25px]">
-          رزرو جلسه
+        <Button className="fixed bottom-[8vh] transform -translate-x-1/2 left-1/2 bg-[#fbeee0] border-2 border-[#422800] rounded-[30px] shadow-[4px_4px_0_0_#422800] text-[#422800] cursor-pointer font-semibold text-[18px] px-[18px] leading-[50px] text-center no-underline select-none hover:bg-white active:shadow-[2px_2px_0_0_#422800] active:translate-y-[2px] md:min-w-[120px] md:px-[25px]">
+          {hasFaSubdomain ? "رزرو جلسه" : "Book a Meeting"}
         </Button>
       </DrawerTrigger>
       <DrawerContent>
         <DrawerHeader>
           <div className="flex flex-col items-center justify-center">
-            <h2 className="text-2xl font-bold text-[#462d22]">رزرو جلسه</h2>
+            <h2 className="text-2xl font-bold text-[#462d22]">{hasFaSubdomain ? "رزرو جلسه" : "Book a Meeting"}</h2>
             {!bookingSuccess && (
               <div className="flex items-center justify-center mt-2 mb-4">
                 <div className={`w-3 h-3 rounded-full mx-1 ${currentStep === 1 ? 'bg-[#ffa620]' : 'bg-[#462d22]/20'}`} />
@@ -434,11 +416,11 @@ md:px-[25px]">
         {bookingSuccess ? (
           <SuccessMessage closeDrawer={closeDrawer} />
         ) : (
-          <>
+          <div className="px-4">
             {currentStep === 1 && (
               <>
                 <p className="text-sm text-[#462d22]/60 text-center mb-4">
-                  لطفا خدمات مورد نظر خود را انتخاب کنید
+                  {hasFaSubdomain ? "لطفا خدمات مورد نظر خود را انتخاب کنید" : "Please select the services you're interested in"}
                 </p>
                 <ServiceSelection 
                   selectedOptions={selectedOptions} 
@@ -468,9 +450,11 @@ md:px-[25px]">
                 isSubmitting={isSubmitting}
               />
             )}
-          </>
+          </div>
         )}
       </DrawerContent>
     </Drawer>
   );
-} 
+}
+
+export default ContactUs; 

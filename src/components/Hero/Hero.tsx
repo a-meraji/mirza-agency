@@ -2,8 +2,8 @@
 
 import { motion } from "framer-motion";
 import { scrollToSection } from "@/utils/scroll";
-import { services } from "@/lib/data";
-
+import useSubdomain from "@/hooks/useSubdomain";
+import { servicesFa, servicesEn } from "@/lib/data";
 const Hero = () => {
 
   const containerVariants = {
@@ -79,32 +79,31 @@ const Hero = () => {
       },
     },
   };
-
-
-
+  const { hasFaSubdomain } = useSubdomain();
+  const services = !hasFaSubdomain? servicesEn: servicesFa;
   return (
     <motion.section
       variants={containerVariants}
       initial="hidden"
       animate="show"
-      className="titr flex flex-col justify-center items-center"
+      className={`${!hasFaSubdomain?"robot":"titr"} flex flex-col justify-center items-center`}
     >
       <motion.div 
         variants={containerVariants}
-        className="mt-[20vh] titr text-center text-iconic2"
+        className="mt-[20vh] text-center text-iconic2"
       >
-        <motion.p variants={titleVariants}>ما توسعه میدهیم</motion.p>
+        <motion.p variants={titleVariants}>{!hasFaSubdomain?"<We Develop/>":"<ما توسعه میدهیم/>"}</motion.p>
         <motion.h1 
           variants={titleVariants}
-          className="text-6xl font-bold mt-4 text-iconic"
+          className="text-4xl lg:text-6xl font-bold mt-4 text-iconic"
         >
-         اتوماسیون هوشمند کسب و کارها
+        {!hasFaSubdomain?"Unlock Efficiency with AI Automation" : "اتوماسیون هوشمند کسب و کارها"}
         </motion.h1>
         <motion.p 
           variants={titleVariants}
           className="mt-6 text-2xl"
         >
-          افزایش بهره وری و کاهش هزینه ها
+        {!hasFaSubdomain?"Transform your business operations with our cutting-edge AI solutions.":"افزایش بهره وری و کاهش هزینه ها"}
         </motion.p>
       </motion.div>
 
@@ -118,7 +117,7 @@ const Hero = () => {
         }}
         className="mt-10 px-8 py-2 border-2 border-iconic2 text-iconic2 bg-[#f3e0cc] rounded-full text-2xl hover:bg-iconic2 hover:text-background transition-colors duration-500"
       >
-        خدمات میرزا
+       {!hasFaSubdomain?"Mirza Services" :"خدمات میرزا"}
       </motion.button>
 
       <motion.div 
@@ -135,7 +134,7 @@ const Hero = () => {
               scrollToSection(service.id);
             }}
             whileHover="hover"
-            className="flex flex-col justify-center items-center gap-y-2 p-5 rounded-md bg-[#e9aa804b]"
+            className="flex flex-col h-full text-center justify-center items-center gap-y-2 p-5 rounded-md bg-[#e9aa804b]"
             style={{
               boxShadow: '0 4px 12px rgba(233, 170, 128, 0.2)',
             }}

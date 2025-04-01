@@ -7,7 +7,7 @@ import TextScrollOpacity from "../UI/TextScrollOpacity";
 import Modal from "../UI/Modal";
 import { Button } from "../UI/button";
 import { ChevronLeft } from "lucide-react";
-
+import { useSubdomain } from "@/hooks/useSubdomain";
 interface ServiceSectionProps {
   id: string;
   title: string;
@@ -30,7 +30,7 @@ const ServiceSection = ({
   isReversed = false,
 }: ServiceSectionProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+const {hasFaSubdomain} = useSubdomain();
   return (
     <>
       <Modal
@@ -50,7 +50,7 @@ const ServiceSection = ({
           isReversed ? "lg:flex-row-reverse" : ""
         }`}
       >
-        <div className="flex-1 flex flex-col gap-4 text-center lg:text-right">
+        <div className={`flex-1 flex flex-col gap-4 text-center  ${hasFaSubdomain ? "lg:text-right" : "lg:text-left"}`}>
           <motion.h2
             variants={fadeIn(isReversed ? "left" : "right", index * 0.2)}
             className="text-3xl lg:text-4xl font-bold text-iconic2 titr"

@@ -1,108 +1,205 @@
-import { BotMessageSquare,  CalendarSync,  Headset, Instagram,   UsersRound } from "lucide-react";
+import {
+  Bot,
+  BotMessageSquare,
+  CalendarSync,
+  Headset,
+  Instagram,
+  MessageCircleCode,
+  Network,
+  UsersRound,
+} from "lucide-react";
 
-export const processes = [
-    {
-      title: "رزرو جلسه مشاوره",
-      description: "بابررسی نیازمندی ها و اهداف شما کار را آغاز می کنیم. نتیجه این نشست ارائه یک برنامه جامع و راهبردی برای توسعه پروژه شما می باشد.",
-    color: "#ffa62044"
-    },
-    {
-      title: "توسعه",
-      description: "بر اساس برنامه راهبردی آماده شده در جلسه مشاوره پروژه رو آغاز میکنیم. سیستم های اتوماسیون و هوش مصنوعی را برای نیازمندی های شما توسعه و بهینه سازی میکنیم.",
-       color: "#ffa62066"
-    },
-    {
-      title: "بررسی و کنترل کیفی",
-      description: "پروژه شما از نظر دقت و صحت، سرعت و امنیت بررسی و اشکال زدایی میشود. پس از آن جهت کسب تائید نهایی شما، ویرایش های جزئی صورت می گیرد.",
-       color: "#C2491D66"
-    },
-    {
-        title: "راه اندازی و پشتیبانی فنی",
-        description:"پروژه شما را در بستر اینترنت  راه اندازی می کنیم و مطمئن می شویم که پروژه شما همیشه در وضعیت بهینه خود بماند. مفتخریم که تا انتها در کنار شما هستیم. ",
-          color: "#b8181955"
-      }
-  ]
+export const processesFa = [
+  {
+    title: "رزرو جلسه مشاوره",
+    description:
+      "بابررسی نیازمندی ها و اهداف شما کار را آغاز می کنیم. نتیجه این نشست ارائه یک برنامه جامع و راهبردی برای توسعه پروژه شما می باشد.",
+    color: "#ffa62044",
+  },
+  {
+    title: "توسعه",
+    description:
+      "بر اساس برنامه راهبردی آماده شده در جلسه مشاوره پروژه رو آغاز میکنیم. سیستم های اتوماسیون و هوش مصنوعی را برای نیازمندی های شما توسعه و بهینه سازی میکنیم.",
+    color: "#ffa62066",
+  },
+  {
+    title: "بررسی و کنترل کیفی",
+    description:
+      "پروژه شما از نظر دقت و صحت، سرعت و امنیت بررسی و اشکال زدایی میشود. پس از آن جهت کسب تائید نهایی شما، ویرایش های جزئی صورت می گیرد.",
+    color: "#C2491D66",
+  },
+  {
+    title: "راه اندازی و پشتیبانی فنی",
+    description:
+      "پروژه شما را در بستر اینترنت  راه اندازی می کنیم و مطمئن می شویم که پروژه شما همیشه در وضعیت بهینه خود بماند. مفتخریم که تا انتها در کنار شما هستیم. ",
+    color: "#b8181955",
+  },
+];
 
-  export  const services = [
-    {
-      id: "chatbot",
-      title: "پشتیبانی خودکار",
-      icon: Headset,
-      description: ` 🕓 پاسخ دهی و پشتیبانی امور مشتریان 24 ساعته 7 روز هفته \n⚡ افزایش تعامل \n💸 کاهش هزینه ها \nبا چت بات های هوش مصنوعی میرزا.`,
-      modalTitle: "پاسخ دهی و پشتیبانی مشتریان میتواند هزینه بر و چالش برانگیز باشد. راه حل",
-      modalDescription: `<p><strong>چرا چت‌بات هوشمند؟</strong></p>
-<ul>
-  <li>✅ پاسخ‌دهی فوری بدون نیاز به نیروی انسانی</li>
-  <li>✅ کاهش هزینه‌ها با خودکارسازی پشتیبانی</li>
-  <li>✅ افزایش تعامل و بهبود تجربه مشتری</li>
+export const processesEn = [
+  {
+    title: "Consultation & Planning",
+    description:
+      "We start by understanding your needs and goals. This session results in a comprehensive strategic plan tailored to your project's development.",
+    color: "#ffa62044",
+  },
+  {
+    title: "Development",
+    description:
+      "Based on the strategic plan, we initiate the project, designing and optimizing automation systems and AI solutions to meet your specific requirements.",
+    color: "#ffa62066",
+  },
+  {
+    title: "Quality Assurance & Testing",
+    description:
+      "Your project undergoes rigorous testing for accuracy, performance, and security. We fine-tune and refine details to ensure it meets the highest standards before final approval.",
+    color: "#C2491D66",
+  },
+  {
+    title: "Deployment & Ongoing Support",
+    description:
+      "We launch your project online and ensure it remains optimized and fully operational. Our commitment doesn’t end at deployment—we’re here to support you every step of the way.",
+    color: "#b8181955",
+  },
+];
+
+
+export const servicesFa = [
+  {
+    id: "consult",
+    title: "مشاوره و تحلیل",
+    icon: MessageCircleCode,
+    description: `تحلیل فرآیندها – درک کامل از روندهای کسب‌وکار شما.\n
+شناسایی فرصت‌های هوش مصنوعی – کشف مکان‌هایی که هوش مصنوعی می‌تواند فرآیندها را خودکار و بهینه‌سازی کند.\n
+اجرای استراتژیک – پیاده‌سازی هوش مصنوعی برای افزایش کارایی، کاهش هزینه‌ها و رشد کسب‌وکار.
+`,
+    modalTitle: "چگونه مشاوره هوش مصنوعی می‌تواند به کسب‌وکار شما کمک کند؟ کلیک کنید",
+    modalDescription: `<ul>
+  <li><strong>افزایش کارایی</strong> – ساده‌سازی فرآیندها و کاهش وظایف دستی.</li>
+  <li><strong>کاهش هزینه‌ها</strong> – کاهش هزینه‌های عملیاتی از طریق خودکارسازی.</li>
+  <li><strong>تصمیم‌گیری سریع‌تر</strong> – استفاده از تحلیل‌های داده‌محور برای اقدامات سریع‌تر.</li>
+  <li><strong>رشد مقیاس‌پذیر</strong> – مقیاس‌پذیری آسان عملیات با راه‌حل‌های مبتنی بر هوش مصنوعی.</li>
+</ul>
+<p>مشاوره هوش مصنوعی کسب‌وکار شما را متحول کرده، رشد را هدایت کرده و نتایج مالی شما را بهبود می‌بخشد.</p>`,
+  },
+  {
+    id: "marketing-automation",
+    title: "هوش مصنوعی در بازاریابی هوشمند",
+    icon: Network,
+    description: `هدف‌گیری دقیق – رسیدن به مخاطبان درست با تحلیل‌های هوش مصنوعی.\n
+کمپین‌های شخصی‌سازی‌شده – ارائه محتوای سفارشی که با نیازهای هر مشتری هماهنگ است.\n
+تحلیل پیش‌بینی‌کننده – پیش‌بینی رفتار و روندهای مشتری برای تصمیم‌گیری هوشمندتر.\n
+بازگشت سرمایه بهینه‌شده – بهبود عملکرد کمپین و بیشینه‌سازی بازگشت سرمایه.
+`,
+    modalTitle: "هوش مصنوعی در کجا قابل استفاده است؟",
+    modalDescription: `<p>خودکارسازی با هوش مصنوعی می‌تواند در زمینه‌هایی مانند <span style="color:#422800;">پشتیبانی مشتری</span>، <span style="color:#ffa620;">بازاریابی</span>، <span style="color:#422800;">تحلیل داده‌ها</span>، <span style="color:#ffa620;">مدیریت موجودی</span> و <span style="color:#422800;">بهینه‌سازی فرآیندها</span> به کار گرفته شود. با خودکارسازی وظایف روتین، کسب‌وکارها می‌توانند <span style="color:#ffa620;">هزینه‌های عملیاتی</span> را کاهش داده، <span style="color:#422800;">کارایی</span> را افزایش داده و منابع را به <span style="color:#ffa620;">فعالیت‌های با ارزش بیشتر</span> تخصیص دهند و در نهایت <span style="color:#422800;">سودآوری</span> را <span style="color:#ffa620;">افزایش</span> دهند و <span style="color:#422800;">رشد</span> را هدایت کنند.</p>
+`,
+  },
+  {
+    id: "chatbot",
+    title: "پشتیبانی خودکار مشتریان",
+    icon: Headset,
+    description: `پشتیبانی 24/7 مشتریان\nافزایش تعامل و رضایت مشتری\nکاهش زمان پاسخ‌دهی\nکاهش هزینه‌های نیروی انسانی و آموزش\nقابل اجرا در وب‌سایت‌ها، پیام‌رسان‌ها و شبکه‌های اجتماعی`,
+    modalTitle: "پشتیبانی مشتریان می‌تواند هزینه‌بر و پیچیده باشد. راه‌حل اینجاست",
+    modalDescription: `<p><strong>چرا چت‌بات هوش مصنوعی؟</strong></p>
+  <ul>
+    <li>پاسخ‌های آنی بدون نیاز به نیروی انسانی</li>
+    <li>کاهش هزینه‌ها</li>
+    <li>کاهش هزینه‌های آموزش و آشنایی فردی</li>
+    <li>افزایش تعامل و بهبود تجربه مشتری</li>
+  </ul>
+  
+  <p><strong>پشتیبانی مشتریان می‌تواند هزینه‌بر و پیچیده باشد.</strong></p>
+  
+  <p>چت‌بات‌های هوش مصنوعی ما، پشتیبانی 24/7 را برای مشتریان شما فراهم می‌کنند و با ارائه پاسخ‌های سریع و دقیق، رضایت مشتریان را افزایش می‌دهند و هزینه‌های پشتیبانی را کاهش می‌دهند.</p>`,
+  },
+  {
+    id: "robotic-process-automation",
+    title: "خودکارسازی فرآیندهای رباتیک",
+    icon: Bot,
+    description: `خودکارسازی فرآیندهای رباتیک (RPA) از ربات‌های نرم‌افزاری مبتنی بر هوش مصنوعی برای خودکارسازی وظایف تکراری و مبتنی بر قوانین در فرآیندهای مختلف کسب‌وکار استفاده می‌کند.\n
+این تکنولوژی به کسب‌وکارها کمک می‌کند تا گردش‌کارها را بهینه‌سازی کنند، دقت را افزایش دهند و نیروی انسانی را برای انجام وظایف استراتژیک‌تر آزاد کنند.`,
+    modalTitle: "مزایای RPA. کلیک کنید",
+    modalDescription: `<ul>
+<li><strong style="color:#422800;">کاهش هزینه‌ها</strong> – از بین بردن کارهای دستی و کاهش هزینه‌های عملیاتی.</li>
+<li><strong style="color:#ffa620;">افزایش دقت</strong> – کاهش خطای انسانی و بهبود کیفیت داده‌ها.</li>
+<li><strong style="color:#422800;">افزایش کارایی</strong> – تسریع در فرآیندها و کاهش زمان پردازش.</li>
+<li><strong style="color:#ffa620;">مقیاس‌پذیری عملیات</strong> – خودکارسازی را برای مدیریت حجم‌های در حال رشد به راحتی گسترش دهید.</li>
+<li><strong style="color:#422800;">تصمیم‌گیری سریع‌تر</strong> – تسریع در زمان پاسخگویی و دوره‌های تصمیم‌گیری.</li>
 </ul>
 
-<p><strong>پاسخ‌دهی و پشتیبانی مشتریان می‌تواند هزینه‌بر و چالش‌برانگیز باشد.</strong></p>
+<p>RPA کسب‌وکار شما را با افزایش بهره‌وری، کاهش هزینه‌ها و تضمین نتایج با کیفیت و منسجم متحول می‌کند.</p>
+`,
+  },
+];
 
-<p>چت‌بات‌های هوش مصنوعی میرزا، پشتیبانی ۲۴/۷ را برای مشتریان شما فراهم می‌کنند. با پاسخ‌دهی سریع و دقیق، رضایت مشتریان را افزایش دهید و هزینه‌های پشتیبانی را کاهش دهید.</p>
-`   },
-    {
-      id: "costumer-service-automation",
-      title: "اتوماسیون کسب و کار",
-      icon: CalendarSync,
-      description: `دستیار هوشمند مجازی مانند یک کارشناس حرفه ای مشاوره خرید، پیگیری سفارشات، رسیدگی به شکایات، رضایت سنجی مشتریان و دیگر نیازمندی های بخش فروش و و خدمات کسب و کار شما را خودکار به جلو پیش میراند.`,
-      modalTitle: "اتوماسیون خدمات مشتریان میرزا چگونه کار میکند؟ کلیک کنید",
-      modalDescription:`<p><strong>پشتیبانی هوشمند، بدون وقفه!</strong></p>
 
-<p>دستیار هوشمند مجازی میرزا مانند یک کارشناس حرفه‌ای، وظایف بخش فروش و خدمات مشتریان را خودکار انجام می‌دهد. از مشاوره خرید تا پیگیری سفارشات، رسیدگی به شکایات و رضایت‌سنجی، همه چیز را به سادگی مدیریت کنید.</p>
-
-<p><strong>چرا اتوماسیون خدمات مشتریان؟</strong></p>
-<ul>
-  <li>✅ پاسخ‌دهی سریع و دقیق به مشتریان</li>
-  <li>✅ کاهش هزینه‌های پشتیبانی و نیروی انسانی</li>
-  <li>✅ افزایش بهره‌وری و بهبود تجربه مشتری</li>
+export const servicesEn = [
+  {
+    id: "consult",
+    title: "Consulting and Analysis",
+    icon: MessageCircleCode,
+    description: `Analyze Operations – Understand your business processes.\n
+Identify AI Opportunities – Discover where AI can automate and optimize.\n
+Strategic Implementation – Deploy AI for efficiency, cost savings, and growth.
+`,
+    modalTitle: "How AI Consulting Will Benefit Your Business? click here",
+    modalDescription: `<ul>
+  <li><strong>Increased Efficiency</strong> – Streamline processes and reduce manual tasks.</li>
+  <li><strong>Cost Reduction</strong> – Lower operational costs through automation.</li>
+  <li><strong>Faster Decision-Making</strong> – Leverage data-driven insights for quicker actions.</li>
+  <li><strong>Scalable Growth</strong> – Easily scale operations with AI-powered solutions.</li>
 </ul>
-`
-    },
-    {
-      id: "ai-admin",
-      title: "ادمین هوشمند شبکه های مجازی",
-      icon: Instagram,
-      description: "پاسخ دهی خودکار 24 ساعته به پیام ها، کامنت ها و نظرات کاربران شکبه های مجازی در اینستاگرام، واتساپ و تلگرام به شما این امکان را می دهد تا حضور پررنگ و تاثیرگذاری در شبکه های مجازی داشته باشد.",
-      modalTitle: "ادمین هوشمند = فعالیت بیشتر با صرف هزینه کمتر برای جزئیات کلیک کنید",
-      modalDescription: `<p>تعامل مؤثرتر، پاسخ‌دهی سریع‌تر و افزایش تأثیرگذاری در شبکه‌های اجتماعی را تجربه کنید.</p>
-
-<p><strong>چرا ادمین هوشمند؟</strong></p>
-<ul>
-  <li>✅ پاسخ‌دهی فوری و بدون تأخیر</li>
-  <li>✅ مدیریت خودکار تعاملات کاربران</li>
-  <li>✅ افزایش تعامل و بهبود برندینگ</li>
+<p>AI consulting transforms your business, driving growth, and improving bottom-line results.</p>`,
+  },
+  {
+    id: "marketing-automation",
+    title: "Smart Marketing Automation",
+    icon: Network,
+    description: `Precision Targeting – Reach the right audience with AI-powered insights.\n
+Personalized Campaigns – Deliver tailored content that resonates with individual customers.\n
+Predictive Analytics – Forecast customer behavior and trends for smarter decisions.\n
+Optimized ROI – Improve campaign performance and maximize return on investment.
+  `,
+    modalTitle: "Where AI Automation can be applied?",
+    modalDescription: `<p>AI automation can be applied in areas such as <span style="color:#422800;">customer support</span>, <span style="color:#ffa620;">marketing</span>, <span style="color:#422800;">data analysis</span>, <span style="color:#ffa620;">inventory management</span>, and <span style="color:#422800;">process optimization</span>. By automating routine tasks, businesses can <span style="color:#ffa620;">reduce operational costs</span>, improve <span style="color:#422800;">efficiency</span>, and redirect resources to <span style="color:#ffa620;">high-value activities</span>, ultimately <span style="color:#422800;">boosting profitability</span> and <span style="color:#ffa620;">driving growth</span>.</p>
+`,
+  },
+  {
+    id: "chatbot",
+    title: "Automated Customer Support",
+    icon: Headset,
+    description: `24/7 customer support\nBoost engagement and customer satisfaction\nReduce response time\nLower workforce and training costs\nImplementable on websites, messaging platforms, and social media`,
+    modalTitle:
+      "Customer support can be costly and challenging. Here’s the solution",
+    modalDescription: `<p><strong>Why an AI Chatbot?</strong></p>
+  <ul>
+    <li>Instant responses without human intervention</li>
+    <li>Cost reduction</li>
+    <li>Minimized individual training and onboarding costs</li>
+    <li>Increased customer engagement and improved experience</li>
+  </ul>
+  
+  <p><strong>Customer support can be both costly and complex.</strong></p>
+  
+  <p>AI-powered Mirza chatbots provide 24/7 support, ensuring fast and accurate responses. Increase customer satisfaction and reduce support costs with automated, efficient service.</p>`,
+  },
+  {
+    id: "robotic-process-automation",
+    title: "Robotic Process Automation",
+    icon: Bot,
+    description: `Robotic Process Automation (RPA) uses AI-powered software robots to automate rule-based, repetitive tasks across various business processes.\n
+This technology enables businesses to streamline workflows, improve accuracy, and free up human employees to focus on more strategic, value-driven tasks.`,
+    modalTitle: "Benefits of RPA. click here",
+    modalDescription: `<ul>
+<li><strong style="color:#422800;">Cost Reduction</strong> – Eliminate manual work and reduce operational costs.</li>
+<li><strong style="color:#ffa620;">Increased Accuracy</strong> – Minimize human error and improve data quality.</li>
+<li><strong style="color:#422800;">Enhanced Efficiency</strong> – Speed up processes and reduce processing time.</li>
+<li><strong style="color:#ffa620;">Scalable Operations</strong> – Easily scale automation to handle growing workloads.</li>
+<li><strong style="color:#422800;">Faster Decision-Making</strong> – Accelerate response times and decision cycles.</li>
 </ul>
 
-<p><strong>تفاوت‌های ادمین انسانی و ادمین هوشمند میرزا:</strong></p>  
-<ul>  
-  <li><strong>دسترسی:</strong> ادمین انسانی محدود به ساعت کاری ⏳ | ادمین هوشمند ۲۴/۷ فعال 🚀</li>  
-  <li><strong>سرعت پاسخ:</strong> ادمین انسانی متغیر و وابسته به فرد ⏱ | ادمین هوشمند فوری و خودکار ⚡</li>  
-  <li><strong>هزینه:</strong> ادمین انسانی پرهزینه 💰 | ادمین هوشمند مقرون‌به‌صرفه ✅</li>  
-  <li><strong>دقت:</strong> ادمین انسانی ممکن است خطا داشته باشد ❌ | ادمین هوشمند دقیق و استاندارد 🎯</li>  
-  <li><strong>مقیاس‌پذیری:</strong> ادمین انسانی نیاز به نیروی بیشتر دارد 📈 | ادمین هوشمند بی‌نهایت گفتگو همزمان 💬</li>  
-</ul>  
-
-<p>🚀 <strong>فعالیت بیشتر، هزینه کمتر!</strong></p>
-`
-    },
-    {
-      id: "costumer-target",
-      title: "دسته‌بندی هوشمند مشتریان",
-      icon: UsersRound,
-      description: "مکالمات صورت گرفته با مشتریان را با استفاده از هوش مصنوعی دسته بندی کنید و در کمپین های تبلیغاتی به صورت هدفمند به مشتریان تان پیام اختصاص دهید.",
-    modalTitle:"مکالمات روزمره شما با مشتریان معتبرترین منبع برای تبلیغات هدفمند با بازدهی بالا است ",
-  modalDescription: `<p><strong>تبلیغات هدفمند، فروش بیشتر!</strong></p>
-
-<p>با استفاده از هوش مصنوعی، مکالمات مشتریان را به‌صورت هوشمند دسته‌بندی کنید و در کمپین‌های تبلیغاتی، پیام‌های اختصاصی و مرتبط ارسال کنید. بازدهی تبلیغات خود را چند برابر کنید!</p>
-
-<p><strong>چرا دسته‌بندی هوشمند مشتریان؟</strong></p>
-<ul>
-  <li>✅ شناسایی دقیق نیازهای مشتریان</li>
-  <li>✅ ارسال پیام‌های شخصی‌سازی‌شده</li>
-  <li>✅ افزایش نرخ تبدیل و فروش</li>
-</ul>
-
-<p>به سادگی از دستشان ندهید! مکالمات روزمره شما با مشتریان، معتبرترین منبع تبلیغات هدفمند با بازدهی بالا است! 🚀</p>
-`  }
-  ];
+<p>RPA transforms your business by enhancing productivity, saving costs, and ensuring high-quality, consistent results.</p>
+`,
+  },
+];

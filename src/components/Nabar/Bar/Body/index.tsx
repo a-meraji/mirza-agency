@@ -1,9 +1,10 @@
+"use client"
 import React from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { blur } from "../../anim";
 import { ListOrdered, LucideIcon } from "lucide-react";
-
+import useSubdomain from "@/hooks/useSubdomain";
 export default function Body({
   links,
   selectedLink,
@@ -17,6 +18,7 @@ export default function Body({
   selectedLink: { isActive: boolean; index: number };
   setSelectedLink: (link: { isActive: boolean; index: number }) => void;
 }) {
+  const { hasFaSubdomain } = useSubdomain();
   return (
     <div className="my-10 lg:my-20 bg-[#462d22b4] backdrop-blur-[10px] rounded-[10px] p-[10px] w-full h-full">
       {links.map((link, index) => {
@@ -99,7 +101,7 @@ export default function Body({
               }
               className="my-10 flex overflow-hidden text-2xl  titr"
             >
-              مراحل کاری
+             {hasFaSubdomain ? "مراحل کاری" : "Process"}
             </motion.p>
           </Link>
     </div>

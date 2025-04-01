@@ -3,14 +3,15 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { height } from '../anim';
 import Body from './Body';
-import { services } from '@/lib/data';
-// import Footer from './Footer';
-// import Image from './Image';
+import { servicesFa, servicesEn } from '@/lib/data';
+import useSubdomain from '@/hooks/useSubdomain';
+
 
 export default function Index() {
 
   const [selectedLink, setSelectedLink] = useState({isActive: false, index: 0});
-
+  const { hasFaSubdomain } = useSubdomain();
+  const services = hasFaSubdomain? servicesFa: servicesEn;
   return (
     <motion.div 
       variants={height} 
@@ -23,7 +24,6 @@ export default function Index() {
         <div className="flex flex-col justify-between w-full">
           <Body links={services} selectedLink={selectedLink} setSelectedLink={setSelectedLink}/>
         </div>
-        {/* <Image src={links[selectedLink.index].src} selectedLink={selectedLink}/> */}
       </div>
     </motion.div>
   )

@@ -1,9 +1,9 @@
 "use client";
-
-import { services } from "@/lib/data";
+import { servicesEn, servicesFa } from "@/lib/data";
 import ServiceSection from "./ServiceSection";
 import { motion, useScroll, useTransform, MotionValue } from "framer-motion";
 import { useRef } from "react";
+import useSubdomain from "@/hooks/useSubdomain";
 
 const AnimatedIcon = ({
   children,
@@ -44,21 +44,21 @@ const icons = [
         strokeLinejoin="round"
       >
         <motion.path
-          d="M12 6V2H8"
+          d="M10 9.5 8 12l2 2.5"
           style={{
             pathLength,
             opacity,
           }}
         />
         <motion.path
-          d="m8 18-4 4V8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2Z"
+          d="m14 9.5 2 2.5-2 2.5"
           style={{
             pathLength,
             opacity,
           }}
         />
         <motion.path
-          d="M2 12h2M9 11v2M15 11v2M20 12h2"
+          d="M7.9 20A9 9 0 1 0 4 16.1L2 22z"
           style={{
             pathLength,
             opacity,
@@ -70,19 +70,13 @@ const icons = [
     <AnimatedIcon key="icon-2">
     {(scrollYProgress, pathLength, opacity) => {
       // Create custom animation timing for different parts
-      const calendarFrame = useTransform(
+      const rectAnimation = useTransform(
         scrollYProgress,
         [0, 0.3, 0.5],
         [0, 0.6, 1]
       );
       
-      const calendarLines = useTransform(
-        scrollYProgress,
-        [0.15, 0.35, 0.5],
-        [0, 0.7, 1]
-      );
-
-      const syncArrows = useTransform(
+      const pathAnimation = useTransform(
         scrollYProgress,
         [0.25, 0.4, 0.5],
         [0, 0.8, 1]
@@ -99,63 +93,50 @@ const icons = [
           strokeLinecap="round"
           strokeLinejoin="round"
         >
-          {/* Calendar frame */}
-          <motion.path
-            d="M21 8.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h4.3"
+          <motion.rect
+            x="16"
+            y="16"
+            width="6"
+            height="6"
+            rx="1"
             style={{
-              pathLength: calendarFrame,
+              pathLength: rectAnimation,
               opacity,
             }}
           />
-          {/* Calendar vertical lines */}
-          <motion.path
-            d="M16 2v4"
+          <motion.rect
+            x="2"
+            y="16"
+            width="6"
+            height="6"
+            rx="1"
             style={{
-              pathLength: calendarLines,
+              pathLength: rectAnimation,
               opacity,
             }}
           />
-          <motion.path
-            d="M8 2v4"
+          <motion.rect
+            x="9"
+            y="2"
+            width="6"
+            height="6"
+            rx="1"
             style={{
-              pathLength: calendarLines,
-              opacity,
-            }}
-          />
-          <motion.path
-            d="M3 10h4"
-            style={{
-              pathLength: calendarLines,
-              opacity,
-            }}
-          />
-
-          {/* Sync arrows and clock */}
-          <motion.path
-            d="M11 10v4h4"
-            style={{
-              pathLength: syncArrows,
+              pathLength: rectAnimation,
               opacity,
             }}
           />
           <motion.path
-            d="m11 14 1.535-1.605a5 5 0 0 1 8 1.5"
+            d="M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3"
             style={{
-              pathLength: syncArrows,
+              pathLength: pathAnimation,
               opacity,
             }}
           />
           <motion.path
-            d="m21 18-1.535 1.605a5 5 0 0 1-8-1.5"
+            d="M12 12V8"
             style={{
-              pathLength: syncArrows,
-              opacity,
-            }}
-          />
-          <motion.path
-            d="M21 22v-4h-4"
-            style={{
-              pathLength: syncArrows,
+              pathLength: pathAnimation,
               opacity,
             }}
           />
@@ -175,30 +156,15 @@ const icons = [
         strokeLinecap="round"
         strokeLinejoin="round"
       >
-        <motion.rect
-          width="20"
-          height="20"
-          x="2"
-          y="2"
-          rx="5"
-          ry="5"
+        <motion.path
+          d="M3 11h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5Zm0 0a9 9 0 1 1 18 0m0 0v5a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3Z"
           style={{
             pathLength: useTransform(scrollYProgress, [0, 0.7, 1], [0, 1, 1]),
             opacity,
           }}
         />
         <motion.path
-          d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"
-          style={{
-            pathLength: useTransform(scrollYProgress, [0, 0.7, 1], [0, 1, 1]),
-            opacity,
-          }}
-        />
-        <motion.line
-          x1="17.5"
-          x2="17.51"
-          y1="6.5"
-          y2="6.5"
+          d="M21 16v2a4 4 0 0 1-4 4h-5"
           style={{
             pathLength: useTransform(scrollYProgress, [0, 0.7, 1], [0, 1, 1]),
             opacity,
@@ -220,23 +186,46 @@ const icons = [
         strokeLinejoin="round"
       >
         <motion.path
-          d="M18 21a8 8 0 0 0-16 0"
+          d="M12 8V4H8"
           style={{
             pathLength,
             opacity,
           }}
         />
-        <motion.circle
-          cx="10"
-          cy="8"
-          r="5"
+        <motion.rect
+          width="16"
+          height="12"
+          x="4"
+          y="8"
+          rx="2"
           style={{
             pathLength,
             opacity,
           }}
         />
         <motion.path
-          d="M22 20c0-3.37-2-6.5-4-8a5 5 0 0 0-.45-8.3"
+          d="M2 14h2"
+          style={{
+            pathLength,
+            opacity,
+          }}
+        />
+        <motion.path
+          d="M20 14h2"
+          style={{
+            pathLength,
+            opacity,
+          }}
+        />
+        <motion.path
+          d="M15 13v2"
+          style={{
+            pathLength,
+            opacity,
+          }}
+        />
+        <motion.path
+          d="M9 13v2"
           style={{
             pathLength,
             opacity,
@@ -248,12 +237,14 @@ const icons = [
 
 ];
 
-const servicesData = services.map((service, index) => ({
-  ...service,
-  icon: icons[index],
-}));
-
 const Services = () => {
+  const { hasFaSubdomain } = useSubdomain();
+  const toBeMappedArray = hasFaSubdomain ? servicesFa : servicesEn;
+  const servicesData = toBeMappedArray.map((service, index) => ({
+    ...service,
+    icon: icons[index],
+  }));
+
   return (
     <section className="w-full py-16 lg:py-32">
       <div className="container mx-auto px-4 lg:px-6">
@@ -268,7 +259,7 @@ const Services = () => {
             id="services"
             className="text-4xl lg:text-5xl font-bold text-iconic titr"
           >
-            خدمات میرزا
+            {hasFaSubdomain ? "خدمات میرزا" : "Our Services"}
           </h6>
         </motion.div>
 
