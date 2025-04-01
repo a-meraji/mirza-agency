@@ -46,11 +46,11 @@ const {hasFaSubdomain} = useSubdomain();
         initial="hidden"
         whileInView="show"
         viewport={{ once: true, amount: 0.25 }}
-        className={`flex flex-col lg:flex-row items-center overflow-hidden justify-between gap-8 py-12 lg:py-20 px-4 lg:px-8 ${
+        className={`flex flex-col lg:flex-row items-center overflow-hidden justify-between gap-8 py-12 lg:py-20  lg:px-8 ${
           isReversed ? "lg:flex-row-reverse" : ""
         }`}
       >
-        <div className={`flex-1 flex flex-col gap-4 text-center  ${hasFaSubdomain ? "lg:text-right" : "lg:text-left"}`}>
+        <div className={`flex-1 flex flex-col gap-4 text-center w-full max-w-full ${hasFaSubdomain ? "lg:text-right" : "lg:text-left"}`}>
           <motion.h2
             variants={fadeIn(isReversed ? "left" : "right", index * 0.2)}
             className="text-3xl lg:text-4xl font-bold text-iconic2 titr"
@@ -59,7 +59,7 @@ const {hasFaSubdomain} = useSubdomain();
           </motion.h2>
           <motion.div
             variants={fadeIn(isReversed ? "left" : "right", index * 0.2)}
-            className="text-base lg:text-lg text-[#422800]/80"
+            className="text-base lg:text-lg text-[#422800]/80 w-full overflow-x-hidden"
           >
             <TextScrollOpacity paragraph={description} />
             {modalTitle && modalDescription && (

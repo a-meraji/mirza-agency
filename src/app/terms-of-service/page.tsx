@@ -139,7 +139,7 @@ const TermsOfService = () => {
       </div>
       
       {/* Persian Version */}
-      <div className="rtl text-right">
+      {/* <div className="rtl text-right">
         <h2 className="text-2xl font-semibold mb-4">شرایط استفاده از خدمات (فارسی)</h2>
         <p className="mb-4">آخرین به‌روزرسانی: {new Date().toLocaleDateString('fa-IR')}</p>
         
@@ -239,7 +239,7 @@ const TermsOfService = () => {
             اگر سؤالی درباره این شرایط دارید، لطفاً با ما از طریق: merajiamin1997@gmail.com تماس بگیرید.
           </p>
         </section>
-      </div>
+      </div> */}
     </div>
   );
 };

@@ -56,7 +56,7 @@ const Word = ({
 }) => {
   const opacity = useTransform(progress, range, [0, 1])
   return <span className={styles.word}>
-    <span className={styles.shadow}>{children}</span>
-    <motion.span style={{opacity: opacity}}>{children}</motion.span>
+    <span className={styles.shadow} style={{ maxWidth: '100%', overflowWrap: 'break-word' }}>{children}</span>
+    <motion.span style={{ opacity: opacity, maxWidth: '100%', overflowWrap: 'break-word' }}>{children}</motion.span>
   </span>
 }

@@ -98,7 +98,7 @@ const PrivacyPolicy = () => {
       </div>
       
       {/* Persian Version */}
-      <div className="rtl text-right">
+      {/* <div className="rtl text-right">
         <h2 className="text-2xl font-semibold mb-4">سیاست حفظ حریم خصوصی (فارسی)</h2>
         <p className="mb-4">آخرین به‌روزرسانی: {new Date().toLocaleDateString('fa-IR')}</p>
         
@@ -186,7 +186,7 @@ const PrivacyPolicy = () => {
             اگر سؤالی درباره این سیاست حفظ حریم خصوصی دارید، لطفاً با ما از طریق: merajiamin1997@gmail.com تماس بگیرید.
           </p>
         </section>
-      </div>
+      </div> */}
     </div>
   );
 };
