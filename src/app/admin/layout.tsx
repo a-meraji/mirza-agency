@@ -56,7 +56,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   // Show loading state
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#fbeee0]">
+      <div className="rtl min-h-screen flex items-center justify-center bg-[#fbeee0]">
         <div className="text-center">
           <Loader2 className="h-12 w-12 animate-spin mx-auto text-[#ffa620]" />
           <h2 className="mt-6 text-2xl font-bold text-[#462d22]">
@@ -86,10 +86,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   // Render admin layout with navigation
   return (
-    <div className="min-h-screen bg-[#fbeee0]/30">
+    <div dir="rtl" className="font-iransans min-h-screen bg-gray-50/20">
       <nav className="bg-[#462d22] text-white p-4">
         <div className="container mx-auto flex justify-between items-center">
-          <div className="text-xl font-bold">پنل مدیریت</div>
+          <div className="text-xl titr font-bold">پنل مدیریت</div>
           <div className="flex items-center">
             {userData && (
               <span className="mr-4 text-sm">
@@ -116,7 +116,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
       </nav>
       
-      <main className="container mx-auto py-6">
+      <main className="container mx-auto py-6 font-iransans">
         {children}
       </main>
     </div>

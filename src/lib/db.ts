@@ -1,21 +1,26 @@
 import mongoose from 'mongoose';
 
-// Global is used here to maintain a cached connection across hot reloads
+// Define mongooseConnection global variable
 declare global {
-  let mongooseConnection: {
+  var mongooseConnection: {
     conn: typeof mongoose | null;
     promise: Promise<typeof mongoose> | null;
     isConnecting: boolean;
     lastConnectionAttempt: number;
-  };
+    retryCount: number;
+    lastError: Error | null;
+  } | undefined;
 }
 
+// Initialize the global connection object if it doesn't exist
 if (!global.mongooseConnection) {
   global.mongooseConnection = {
     conn: null,
     promise: null,
     isConnecting: false,
-    lastConnectionAttempt: 0
+    lastConnectionAttempt: 0,
+    retryCount: 0,
+    lastError: null
   };
 }
 
@@ -26,8 +31,16 @@ if (!global.mongooseConnection) {
  * - Provides consistent error handling
  */
 export async function connectToDatabase() {
+  // Validate environment variables
   if (!process.env.DATABASE_URL) {
     throw new Error('Please define the DATABASE_URL environment variable');
+  }
+  
+  // Check for credential components in the connection string
+  const connectionString = process.env.DATABASE_URL;
+  const hasCredentials = connectionString.includes('@');
+  if (!hasCredentials) {
+    console.warn('Connection string may be missing credentials. Format should be mongodb+srv://username:password@cluster...');
   }
 
   // If we have an existing connection that is connected, return it
@@ -77,7 +90,17 @@ export async function connectToDatabase() {
     }
   }
 
-  // Connection options
+  // Check for repeated authentication failures
+  if (
+    global.mongooseConnection.lastError && 
+    global.mongooseConnection.lastError.message.includes('authentication failed') &&
+    global.mongooseConnection.retryCount > 3
+  ) {
+    console.error('Multiple authentication failures detected. Please check your credentials in .env');
+    throw new Error('MongoDB authentication failed repeatedly. Please verify your credentials.');
+  }
+
+  // Connection options with better timeout and retry settings
   const opts = {
     bufferCommands: false,
     serverSelectionTimeoutMS: 30000,
@@ -85,6 +108,10 @@ export async function connectToDatabase() {
     connectTimeoutMS: 30000,
     maxPoolSize: 10,
     family: 4,
+    retryWrites: true,
+    retryReads: true,
+    authSource: 'admin', // Explicitly set auth source
+    authMechanism: 'SCRAM-SHA-1', // Explicitly set auth mechanism
   };
 
   // Clear existing listeners to prevent duplicates
@@ -94,11 +121,20 @@ export async function connectToDatabase() {
   mongoose.connection.on('connected', () => {
     console.log('MongoDB connected successfully');
     global.mongooseConnection.isConnecting = false;
+    global.mongooseConnection.retryCount = 0; // Reset retry count on successful connection
+    global.mongooseConnection.lastError = null;
   });
 
   mongoose.connection.on('error', (err) => {
     console.error('MongoDB connection error:', err);
     global.mongooseConnection.isConnecting = false;
+    global.mongooseConnection.lastError = err;
+    
+    // Check for authentication errors specifically
+    if (err.message && err.message.includes('authentication failed')) {
+      console.error('Authentication failed. Please check your MongoDB username and password in .env');
+      global.mongooseConnection.retryCount += 1;
+    }
   });
 
   mongoose.connection.on('disconnected', () => {
@@ -120,6 +156,23 @@ export async function connectToDatabase() {
     return mongoose;
   } catch (error) {
     console.error('Failed to connect to MongoDB:', error);
+    
+    // Enhanced error handling for common issues
+    if (error instanceof Error) {
+      global.mongooseConnection.lastError = error;
+      
+      if (error.message.includes('authentication failed')) {
+        console.error('Authentication error: Check your DATABASE_URL credentials');
+        global.mongooseConnection.retryCount += 1;
+      } else if (error.message.includes('ENOTFOUND')) {
+        console.error('Network error: Cannot resolve MongoDB host. Check your network or DATABASE_URL');
+      } else if (error.message.includes('ECONNREFUSED')) {
+        console.error('Connection refused: MongoDB server may be down or not accepting connections');
+      } else if (error.message.includes('timed out')) {
+        console.error('Connection timeout: MongoDB server took too long to respond');
+      }
+    }
+    
     global.mongooseConnection.isConnecting = false;
     global.mongooseConnection.promise = null;
     throw error;

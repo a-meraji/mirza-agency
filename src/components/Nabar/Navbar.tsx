@@ -5,6 +5,7 @@ import { AnimatePresence} from "framer-motion";
 import Bar from "./Bar";
 import styles from './style.module.css';
 import { useSubdomain } from "@/hooks/useSubdomain";
+import Link from "next/link";
 function Navbar() {
   const [visible, setVisible] = useState(true);
   const [prevScrollPos, setPrevScrollPos] = useState(0);
@@ -34,13 +35,15 @@ function Navbar() {
         }`}
       >
         <div className="flex pag-x-2 items-center">
-          <Image
-            src="./logo.svg"
+        <Link href="/" className="flex justify-center items-center w-fit mx-auto">
+        <Image
+            src="/logo.svg"
             width={55}
             height={55}
             alt= {!hasFaSubdomain?"Mirza AI automation agency":"لوگو آژانس توسعه میرزا"}
           />
           {!hasFaSubdomain?"Mirza agency":"آژانس میرزا"}
+          </Link>
         </div>
         <div onClick={() => {setIsActive(!isActive)}} className={styles.el}>
   

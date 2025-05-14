@@ -2,6 +2,11 @@ import { availableAppointmentModel } from './availableAppointment';
 import { bookingModel } from './booking';
 import { userModel } from './user';
 import { blogModel } from './blog';
+import { ragSystemModel } from './ragSystem';
+import { conversationModel } from './conversation';
+import { messageModel } from './message';
+import { usageModel } from './usage';
+import { logModel } from './log';
 import { DatabaseService } from '../services/database';
 
 /**
@@ -9,11 +14,18 @@ import { DatabaseService } from '../services/database';
  * Similar to Prisma client structure for easy migration
  */
 export const db = {
-  // Models
+  // Original models
   availableAppointment: availableAppointmentModel,
   booking: bookingModel,
   user: userModel,
   blog: blogModel,
+  
+  // New RAG-related models
+  ragSystem: ragSystemModel,
+  conversation: conversationModel,
+  message: messageModel,
+  usage: usageModel,
+  log: logModel,
   
   // Transaction support
   $transaction: async (operations: Promise<any>[]) => {
@@ -27,19 +39,37 @@ export const db = {
 
 // Export individual models
 export {
-  availableAppointmentModel,
-  bookingModel,
-  userModel,
-  blogModel
-};
-
-// Default export with named variable
-const models = {
+  // Original models
   availableAppointmentModel,
   bookingModel,
   userModel,
   blogModel,
+  
+  // New RAG-related models
+  ragSystemModel,
+  conversationModel,
+  messageModel,
+  usageModel,
+  logModel
+};
+
+// Default export with named variable
+const models = {
+  // Original models
+  availableAppointmentModel,
+  bookingModel,
+  userModel,
+  blogModel,
+  
+  // New RAG-related models
+  ragSystemModel,
+  conversationModel,
+  messageModel,
+  usageModel,
+  logModel,
+  
+  // Database client
   db
 };
 
-export default models; 
+export default models;

@@ -1,12 +1,8 @@
 import {
   Bot,
-  BotMessageSquare,
-  CalendarSync,
   Headset,
-  Instagram,
   MessageCircleCode,
   Network,
-  UsersRound,
 } from "lucide-react";
 
 export const processesFa = [

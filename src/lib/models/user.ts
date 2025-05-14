@@ -8,6 +8,7 @@ export interface UserDocument extends Document {
   password: string;
   name?: string;
   role: string;
+  apiKey:string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -24,6 +25,7 @@ export class UserModel extends BaseModel<UserDocument> {
         password: { type: String, required: true },
         name: { type: String },
         role: { type: String, required: true, default: 'user' },
+        apiKey: { type: String, required: true, unique: true }
       },
       {
         timestamps: true, // Automatically add createdAt and updatedAt fields

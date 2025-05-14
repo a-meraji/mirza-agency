@@ -1,12 +1,10 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import Script from "next/script";
-import Navbar from "@/components/Nabar/Navbar";
-import ContactUs from "@/components/UI/ContactUs";
 import Footer from "@/components/UI/Footer";
 import SmoothScroll from "@/components/SmoothScroll";
 import LanguageProvider from "@/components/LanguageProvider";
-import ChatWidget from "@/components/ChatWidget";
+// import ChatWidget from "@/components/ChatWidget";
 type Props = {
   children: React.ReactNode;
   params: { lang: string };
@@ -42,9 +40,7 @@ export default function RootLayout({
             <div className="absolute pointer-events-none inset-0 flex items-center justify-center bg-white [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]"></div>
           </div>
           <SmoothScroll />
-          <Navbar />
           {children}
-          <ContactUs />
           <Footer />
           {/* <ChatWidget /> */}
         </LanguageProvider>

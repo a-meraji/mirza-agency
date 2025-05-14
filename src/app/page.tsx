@@ -9,6 +9,8 @@ import Hero from "@/components/Hero/Hero"; // Using existing Farsi components
 import Process from "@/components/Process/Process";
 import Services from "@/components/Services/Services";
 import AutomateScroll from "@/components/AutomateScroll";
+import ContactUs from "@/components/UI/ContactUs";
+import Navbar from "@/components/Nabar/Navbar";
 
 export default function HomePage() {
   return (
@@ -17,6 +19,8 @@ export default function HomePage() {
         <Loader2 className="w-12 h-12 animate-spin text-[#ffa620]" />
       </div>
     }>
+          <Navbar />
+
       <main className="relative">
 
 <Hero />
@@ -25,6 +29,8 @@ export default function HomePage() {
 <Process />
 
 </main>
+<ContactUs />
+
     </Suspense>
   );
 } 

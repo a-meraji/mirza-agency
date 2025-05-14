@@ -3,6 +3,51 @@ import { connectToDatabase } from '../db';
 import { DatabaseService } from '../services/database';
 
 /**
+ * Common interface for query options
+ */
+export interface QueryOptions {
+  where?: Record<string, any>;
+  orderBy?: Record<string, 'asc' | 'desc'> | Array<Record<string, 'asc' | 'desc'>>;
+  include?: Record<string, boolean>;
+  select?: Record<string, number>; // For projections like { _id: 1 }
+  limit?: number;
+  skip?: number;
+  sort?: Record<string, number>; // For sorting like { createdAt: -1 }
+}
+
+/**
+ * Common interface for find by ID options
+ */
+export interface FindByIdOptions {
+  id: string;
+  include?: Record<string, boolean>;
+}
+
+/**
+ * Common interface for create options
+ */
+export interface CreateOptions<T> {
+  data: Partial<T>;
+}
+
+/**
+ * Common interface for update options
+ */
+export interface UpdateOptions<T> {
+  id?: string;
+  where?: { id: string };
+  data: Partial<T>;
+}
+
+/**
+ * Common interface for delete options
+ */
+export interface DeleteOptions {
+  id?: string;
+  where?: { id: string };
+}
+
+/**
  * Base model class that provides common functionality for all models
  */
 export abstract class BaseModel<T extends Document> {
@@ -71,47 +116,111 @@ export abstract class BaseModel<T extends Document> {
     
     throw error;
   }
-}
-
-/**
- * Common interface for query options
- */
-export interface QueryOptions {
-  where?: Record<string, any>;
-  orderBy?: Record<string, 'asc' | 'desc'> | Array<Record<string, 'asc' | 'desc'>>;
-  include?: Record<string, boolean>;
-  limit?: number;
-  skip?: number;
-}
-
-/**
- * Common interface for find by ID options
- */
-export interface FindByIdOptions {
-  id: string;
-  include?: Record<string, boolean>;
-}
-
-/**
- * Common interface for create options
- */
-export interface CreateOptions<T> {
-  data: Partial<T>;
-}
-
-/**
- * Common interface for update options
- */
-export interface UpdateOptions<T> {
-  id?: string;
-  where?: { id: string };
-  data: Partial<T>;
-}
-
-/**
- * Common interface for delete options
- */
-export interface DeleteOptions {
-  id?: string;
-  where?: { id: string };
+  
+  /**
+   * Find many documents
+   */
+  async findMany(options: QueryOptions = {}) {
+    try {
+      await this.ensureConnection();
+      
+      return await DatabaseService.executeWithRetry(async () => {
+        const { where = {}, include = {}, skip = 0, limit = 100, orderBy, sort, select } = options;
+        
+        // Build the query
+        let query = this.model.find(where);
+        
+        // Handle pagination
+        if (skip) query = query.skip(skip);
+        if (limit) query = query.limit(limit);
+        
+        // Handle sorting
+        if (sort) {
+          query = query.sort(sort);
+        } else if (orderBy) {
+          const sortCriteria: Record<string, number> = {};
+          
+          if (Array.isArray(orderBy)) {
+            orderBy.forEach(criteria => {
+              Object.entries(criteria).forEach(([field, direction]) => {
+                sortCriteria[field] = direction === 'asc' ? 1 : -1;
+              });
+            });
+          } else {
+            Object.entries(orderBy).forEach(([field, direction]) => {
+              sortCriteria[field] = direction === 'asc' ? 1 : -1;
+            });
+          }
+          
+          query = query.sort(sortCriteria);
+        }
+        
+        // Handle includes/population
+        Object.entries(include).forEach(([field, shouldInclude]) => {
+          if (shouldInclude) {
+            query = query.populate(field);
+          }
+        });
+        
+        // Handle field selection
+        if (select) {
+          query = query.select(select);
+        }
+        
+        const results = await query.lean();
+        
+        // Format the results
+        return results.map(doc => this.formatDocument(doc));
+      });
+    } catch (error) {
+      return this.handleError(error, 'findMany');
+    }
+  }
+  
+  /**
+   * Find a single document
+   */
+  async findOne(options: QueryOptions = {}) {
+    try {
+      await this.ensureConnection();
+      
+      return await DatabaseService.executeWithRetry(async () => {
+        const { where = {}, include = {} } = options;
+        
+        // Build the query
+        let query = this.model.findOne(where);
+        
+        // Handle includes/population
+        Object.entries(include).forEach(([field, shouldInclude]) => {
+          if (shouldInclude) {
+            query = query.populate(field);
+          }
+        });
+        
+        const doc = await query.lean();
+        
+        if (!doc) return null;
+        
+        // Format the document
+        return this.formatDocument(doc);
+      });
+    } catch (error) {
+      return this.handleError(error, 'findOne');
+    }
+  }
+  
+  /**
+   * Count documents
+   */
+  async count(where: Record<string, any> = {}) {
+    try {
+      await this.ensureConnection();
+      
+      return await DatabaseService.executeWithRetry(async () => {
+        return await this.model.countDocuments(where);
+      });
+    } catch (error) {
+      return this.handleError(error, 'count');
+    }
+  }
 } 

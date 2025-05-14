@@ -22,6 +22,14 @@ export class DatabaseService {
       return conn;
     } catch (error) {
       console.error('Error establishing database connection:', error);
+      
+      // Check if it's an authentication error
+      if (error instanceof Error && error.message.includes('authentication failed')) {
+        console.error('Authentication failed. Please check your MongoDB credentials in .env');
+        // Wait a moment before throwing to prevent rapid retries
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      }
+      
       throw error;
     }
   }
@@ -133,13 +141,33 @@ export class DatabaseService {
         // If this is a connection error, try to reconnect
         if (
           error instanceof mongoose.Error.MongooseServerSelectionError ||
-          (error instanceof Error && error.message.includes('buffering timed out'))
+          (error instanceof Error && 
+            (error.message.includes('buffering timed out') || 
+             error.message.includes('authentication failed')))
         ) {
           console.log('Connection error detected, forcing reconnection...');
           try {
+            // Use a longer timeout for authentication errors
+            if (error instanceof Error && error.message.includes('authentication failed')) {
+              console.log('Authentication error detected, waiting longer before retry');
+              await new Promise(resolve => setTimeout(resolve, delay * 2));
+            }
+            
+            // Try to reconnect
             await this.ensureConnection();
           } catch (reconnectError) {
             console.error('Error during reconnection:', reconnectError);
+            
+            // If this is an authentication error and we've tried multiple times, notify the user
+            if (reconnectError instanceof Error && 
+                reconnectError.message.includes('authentication failed') && 
+                attempt >= maxRetries - 1) {
+              console.error('=============================================');
+              console.error('CRITICAL: Repeated authentication failures detected.');
+              console.error('Please check your MongoDB credentials in .env');
+              console.error('Format should be: mongodb+srv://username:password@cluster...');
+              console.error('=============================================');
+            }
           }
         }
         
@@ -153,5 +181,31 @@ export class DatabaseService {
     }
     
     throw lastError;
+  }
+  
+  /**
+   * Check database health and connection status
+   * @returns Object with connection status information
+   */
+  static async checkHealth() {
+    try {
+      const startTime = Date.now();
+      await this.ensureConnection();
+      const responseTime = Date.now() - startTime;
+      
+      return {
+        status: 'connected',
+        responseTime: `${responseTime}ms`,
+        readyState: mongoose.connection.readyState,
+        host: mongoose.connection.host,
+        databaseName: mongoose.connection.name
+      };
+    } catch (error) {
+      return {
+        status: 'error',
+        error: error instanceof Error ? error.message : 'Unknown error',
+        readyState: mongoose.connection.readyState
+      };
+    }
   }
 } 

@@ -126,7 +126,7 @@ const TimeSelection = ({ availableSlots, selectedSlot, setSelectedSlot, goToPrev
                 </h4>
               </div>
               
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-3 gap-2 max-h-[60vh] overflow-y-scroll">
                 {slots.map((slot: TimeSlot) => {
                   const startTime = new Date(slot.startTime);
                   const endTime = new Date(slot.endTime);
