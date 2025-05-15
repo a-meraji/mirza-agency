@@ -6,6 +6,8 @@ import Bar from "./Bar";
 import styles from './style.module.css';
 import { useSubdomain } from "@/hooks/useSubdomain";
 import Link from "next/link";
+import { LayoutDashboard } from "lucide-react"; // Import the dashboard icon from lucide-react
+
 function Navbar() {
   const [visible, setVisible] = useState(true);
   const [prevScrollPos, setPrevScrollPos] = useState(0);
@@ -25,40 +27,47 @@ function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [prevScrollPos]);
 
-  
- 
-
-    return (
-      <nav
-        className={`z-10 backdrop-blur-sm backdrop-contrast-100 backdrop-brightness-100 bg-[#462d22b4] max-w-xl mx-auto right-0 left-0 fixed top-4 rounded-full px-5 text-iconic flex items-center justify-between w-full transition-opacity duration-300 ${
-          visible ? "opacity-100" : "opacity-0"
-        }`}
-      >
-        <div className="flex pag-x-2 items-center">
+  return (
+    <nav
+      className={`z-10 backdrop-blur-sm backdrop-contrast-100 backdrop-brightness-100 bg-[#462d22b4] max-w-xl mx-auto right-0 left-0 fixed top-4 rounded-full px-5 text-iconic flex items-center justify-between w-full transition-opacity duration-300 ${
+        visible ? "opacity-100" : "opacity-0"
+      }`}
+    >
+      <div className="flex pag-x-2 items-center">
         <Link href="/" className="flex justify-center items-center w-fit mx-auto">
-        <Image
+          <Image
             src="/logo.svg"
             width={55}
             height={55}
-            alt= {!hasFaSubdomain?"Mirza AI automation agency":"لوگو آژانس توسعه میرزا"}
+            alt={!hasFaSubdomain?"Mirza AI automation agency":"لوگو آژانس توسعه میرزا"}
           />
           {!hasFaSubdomain?"Mirza agency":"آژانس میرزا"}
-          </Link>
+        </Link>
+      </div>
+      <div className="flex items-center gap-x-2">
+
+      {/* Dashboard Link with Icon */}
+      <Link 
+        href="/dashboard" 
+        className="flex flex-col items-center justify-center mx-4 hover:text-white transition-colors"
+      >
+        {/* <LayoutDashboard size={20} /> */}
+        <span className="text-xs">
+          {!hasFaSubdomain ? "Dashboard" : "داشبورد"}
+        </span>
+      </Link>
+      
+      <div onClick={() => {setIsActive(!isActive)}} className={styles.el}>
+        <div className={`${styles.burger} ${isActive ? styles.burgerActive : ""} text-iconic`}></div>
+        <div className="absolute top-0">
+          <AnimatePresence mode="wait">
+            {isActive && <Bar/>}
+          </AnimatePresence>
         </div>
-        <div onClick={() => {setIsActive(!isActive)}} className={styles.el}>
-  
-  <div className={`${styles.burger} ${isActive ? styles.burgerActive : ""} text-iconic`}></div>
-  <div className="absolute top-0">
-  
-  <AnimatePresence mode="wait">
-  
-                  {isActive && <Bar/>}
-  
-              </AnimatePresence>
-  </div>
-  </div>
-      </nav>
-    );
+      </div>
+      </div>
+    </nav>
+  );
 }
 
 export default Navbar;

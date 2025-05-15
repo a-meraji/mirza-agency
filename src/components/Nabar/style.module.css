@@ -38,6 +38,7 @@
     justify-content: center;
     gap: 8px;
     cursor: pointer;
+    padding:0.7rem 0.5rem;
 }
 
 .label{
