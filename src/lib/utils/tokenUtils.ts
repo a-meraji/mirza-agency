@@ -1,6 +1,6 @@
-import { encoding_for_model } from "tiktoken";
+// import { encoding_for_model } from "tiktoken";
 
-const encoding = encoding_for_model("gpt-4o");
+// const encoding = encoding_for_model("gpt-4o");
 
 /**
  * Utility functions for token counting and cost estimation
@@ -24,8 +24,8 @@ const TOKEN_PRICING = {
    */
   export function estimateTokenCount(text: string): number {
     if (!text) return 0;
-    const tokens = encoding.encode(text);
-  return tokens.length;
+    // Rough estimate: 1 token ~ 4 characters
+    return Math.ceil(text.length / 4);
   }
   
   /**
