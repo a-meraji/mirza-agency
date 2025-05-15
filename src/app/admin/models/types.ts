@@ -63,34 +63,27 @@ export interface BlogFormData {
 export interface RAGSystem {
   id: string;
   name: string;
-  type: string;
-  status: 'active' | 'inactive' | 'pending';
+  description?: string;
+  user: string | User;
   createdAt: string;
   updatedAt: string;
-  modelType?: string;
-  embeddingModel?: string;
-  storageSize?: number;
-  documentCount?: number;
 }
 
 export interface User {
   id: string;
   name: string;
   email: string;
-  apiKey: string;
-  phone?: string;
   role: 'admin' | 'user' | 'manager';
   status: 'active' | 'inactive' | 'suspended';
+  apiKey?: string;
   createdAt: string;
   updatedAt: string;
-  lastLogin?: string;
-  ragSystems: RAGSystem[];
 }
 
 export interface UserFilter {
   searchTerm: string;
-  role?: string;
-  status?: string;
-  ragSystemType?: string;
-  ragSystemStatus?: string;
+  role: string;
+  status: string;
+  ragSystemType: string;
+  ragSystemStatus: string;
 } 
