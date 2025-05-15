@@ -1,15 +1,16 @@
 "use client"
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { Loader2, RefreshCw } from 'lucide-react';
+import { Loader2, RefreshCw, X } from 'lucide-react';
 import useSubdomain from '@/hooks/useSubdomain';
 import { dashboardTextEn, dashboardTextFa } from '@/lib/dashboard-lang';
-import { ConversationsPageProps, PaginationState } from './models/types';
+import { PaginationState, Conversation } from './models/types';
 import useConversations from './hooks/useConversations';
 import SearchBar from './components/SearchBar';
 import ConversationList from './components/ConversationList';
 import Pagination from './components/Pagination';
+import MessageList from './components/MessageList';
 
 export default function ConversationsPage() {
   const { hasFaSubdomain } = useSubdomain();
@@ -29,6 +30,28 @@ export default function ConversationsPage() {
   const skip = (page - 1) * limit;
   const search = searchParam;
   
+  // State for expanded conversation
+  const [expandedConversation, setExpandedConversation] = useState<Conversation | null>(null);
+  const [expandedMessages, setExpandedMessages] = useState<any[]>([]);
+  const [isLoadingMessages, setIsLoadingMessages] = useState(false);
+  const [isMobileView, setIsMobileView] = useState(false);
+  
+  // Check if screen is mobile size
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsMobileView(window.innerWidth < 768);
+    };
+    
+    // Initial check
+    checkScreenSize();
+    
+    // Add event listener
+    window.addEventListener('resize', checkScreenSize);
+    
+    // Clean up
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
+  
   // Get conversation data using custom hook
   const { 
     isLoading, 
@@ -47,6 +70,53 @@ export default function ConversationsPage() {
       setSearchQuery(search);
     }
   }, [search, setSearchQuery]);
+  
+  // Fetch messages when a conversation is expanded
+  const fetchConversationMessages = async (conversation: Conversation) => {
+    setIsLoadingMessages(true);
+    setExpandedMessages([]); // Clear previous messages
+    
+    try {
+      // Simple POST request with the conversation ID
+      const response = await fetch(`/api/dashboard/messages`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          conversationId: conversation.id
+        })
+      });
+      
+      if (!response.ok) {
+        console.error(`Error fetching messages: Status ${response.status}`);
+        return;
+      }
+      
+      const data = await response.json();
+      setExpandedMessages(data.messages || []);
+      
+    } catch (error) {
+      console.error('Failed to fetch messages:', error);
+      alert('An error occurred while fetching messages. Please try again.');
+    } finally {
+      setIsLoadingMessages(false);
+    }
+  };
+  
+  // Toggle conversation expansion
+  const toggleConversation = (conversation: Conversation) => {
+    if (expandedConversation && expandedConversation.id === conversation.id) {
+      // Collapse the conversation if it's already expanded
+      setExpandedConversation(null);
+      setExpandedMessages([]);
+    } else {
+      // Expand the conversation and fetch its messages
+      setExpandedConversation(conversation);
+      fetchConversationMessages(conversation);
+    }
+  };
   
   const totalPages = Math.ceil(totalCount / limit);
   
@@ -80,6 +150,39 @@ export default function ConversationsPage() {
   
   if (!user) {
     return <div>Loading...</div>;
+  }
+
+  // On mobile, when a conversation is expanded, show just the message view
+  if (isMobileView && expandedConversation) {
+    return (
+      <div dir={hasFaSubdomain ? 'rtl' : 'ltr'} className={`${hasFaSubdomain ? 'font-iransans' : 'robot'}`}>
+        <div className="bg-white rounded-lg shadow overflow-hidden">
+          <div className="sticky top-0 z-10 bg-white border-b border-gray-200 flex items-center p-4">
+            <button 
+              onClick={() => setExpandedConversation(null)}
+              className="mr-3 p-1 rounded-full hover:bg-gray-100"
+            >
+              <X className="h-5 w-5 text-gray-500" />
+            </button>
+            <h2 className="text-lg font-medium truncate">
+              {expandedConversation.conversationId.substring(0, 8)}...
+            </h2>
+          </div>
+          
+          {isLoadingMessages ? (
+            <div className="flex justify-center items-center py-10">
+              <Loader2 className="w-6 h-6 animate-spin text-iconic" />
+            </div>
+          ) : (
+            <MessageList 
+              messages={expandedMessages}
+              hasFaSubdomain={hasFaSubdomain}
+              conversation={expandedConversation}
+            />
+          )}
+        </div>
+      </div>
+    );
   }
   
   return (
@@ -120,13 +223,35 @@ export default function ConversationsPage() {
         </div>
       </div>
       
-      {/* Conversations List */}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
-        <ConversationList 
-          conversations={conversations}
-          hasFaSubdomain={hasFaSubdomain}
-          totalCount={totalCount}
-        />
+      {/* Two-column layout for desktop */}
+      <div className="flex flex-col md:flex-row gap-6">
+        {/* Conversations List (left side on desktop) */}
+        <div className={`bg-white rounded-lg shadow overflow-hidden ${expandedConversation ? 'md:w-1/3' : 'w-full'}`}>
+          <ConversationList 
+            conversations={conversations}
+            hasFaSubdomain={hasFaSubdomain}
+            totalCount={totalCount}
+            expandedConversation={expandedConversation}
+            toggleConversation={toggleConversation}
+          />
+        </div>
+        
+        {/* Expanded Conversation Messages (right side on desktop) */}
+        {expandedConversation && (
+          <div className="bg-white rounded-lg shadow overflow-hidden md:w-2/3">
+            {isLoadingMessages ? (
+              <div className="flex justify-center items-center py-10">
+                <Loader2 className="w-6 h-6 animate-spin text-iconic" />
+              </div>
+            ) : (
+              <MessageList 
+                messages={expandedMessages}
+                hasFaSubdomain={hasFaSubdomain}
+                conversation={expandedConversation}
+              />
+            )}
+          </div>
+        )}
       </div>
       
       {/* Pagination */}

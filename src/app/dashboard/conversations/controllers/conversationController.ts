@@ -4,7 +4,9 @@ import { Conversation } from '../models/types';
  * Fetches the current user session
  */
 export async function fetchUserSession() {
-  const sessionRes = await fetch('/api/auth/session');
+  const sessionRes = await fetch('/api/auth/session', {
+    credentials: 'include' // Include cookies for authentication
+  });
   return await sessionRes.json();
 }
 
@@ -13,7 +15,13 @@ export async function fetchUserSession() {
  */
 export async function fetchConversations(page: number, limit: number, search: string) {
   const searchQuery = search ? `&search=${encodeURIComponent(search)}` : '';
-  const conversationsRes = await fetch(`/api/dashboard/conversations?page=${page}&limit=${limit}${searchQuery}`);
+  const conversationsRes = await fetch(`/api/dashboard/conversations?page=${page}&limit=${limit}${searchQuery}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    credentials: 'include' // Include cookies for authentication
+  });
   return await conversationsRes.json();
 }
 

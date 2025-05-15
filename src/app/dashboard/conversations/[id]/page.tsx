@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Session } from 'next-auth';
 import Link from 'next/link';
 import { ArrowLeft, Calendar, Clock, Shield, MessageCircle, Download, Loader2, RefreshCw } from 'lucide-react';
@@ -16,6 +16,7 @@ export default function ConversationDetailPage({
 }) {
   const { hasFaSubdomain } = useSubdomain();
   const t = hasFaSubdomain ? dashboardTextFa : dashboardTextEn;
+  const conversationId = React.use(params).id;
 
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -40,7 +41,7 @@ export default function ConversationDetailPage({
       setUser(sessionData.user);
       
       // Fetch conversation
-      const conversationRes = await fetch(`/api/conversations/${params.id}`);
+      const conversationRes = await fetch(`/api/conversations/${conversationId}`);
       
       if (conversationRes.status === 404) {
         setIsNotFound(true);
@@ -58,7 +59,7 @@ export default function ConversationDetailPage({
       setConversation(conversationData);
       
       // Fetch messages
-      const messagesRes = await fetch(`/api/conversations/${params.id}/messages`);
+      const messagesRes = await fetch(`/api/conversations/${conversationId}/messages`);
       const messagesData = await messagesRes.json();
       setMessages(messagesData);
     } catch (error) {
@@ -76,7 +77,7 @@ export default function ConversationDetailPage({
 
   useEffect(() => {
     fetchData();
-  }, [params.id]);
+  }, [conversationId]);
 
   if (isLoading) {
     return (

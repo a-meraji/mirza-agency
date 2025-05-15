@@ -131,7 +131,7 @@ export default function UserList({ users, loading, onStatusChange }: UserListPro
               <Fragment key={user.id}>
                 <tr 
                   className={`hover:bg-gray-50 transition-colors ${expandedUsers[user.id] ? 'bg-blue-50' : ''}`}
-                >
+          >
                   <td className="px-4 py-4 whitespace-nowrap text-right">
                     <div className="flex items-center justify-end">
                 <div>
@@ -161,7 +161,7 @@ export default function UserList({ users, loading, onStatusChange }: UserListPro
                       defaultValue={user.status} 
                       onValueChange={(value: string) => handleStatusChange(user.id, value)}
                       disabled={statusUpdating[user.id]}
-                    >
+                >
                       <SelectTrigger className="w-28">
                         <SelectValue>
                           {statusUpdating[user.id] ? (
@@ -189,7 +189,7 @@ export default function UserList({ users, loading, onStatusChange }: UserListPro
                         <button
                       onClick={() => toggleUserExpanded(user.id)}
                       className="flex items-center text-blue-600 hover:text-blue-900"
-                    >
+                        >
                       {expandedUsers[user.id] ? (
                         <>
                           <span>بستن</span>

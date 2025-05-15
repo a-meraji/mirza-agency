@@ -147,7 +147,16 @@ export class ConversationModel extends BaseModel<ConversationDocument> {
       return await DatabaseService.executeWithRetry(async () => {
         const { id, include = {} } = options;
         
-        let query = this.model.findById(id);
+        let query;
+        
+        try {
+          // Try to find by MongoDB ObjectId first
+          query = this.model.findById(id);
+        } catch (error) {
+          console.error('Error with findById, trying findOne:', error);
+          // If that fails, try finding by the id as a string field
+          return null;
+        }
         
         // Handle includes/population
         if (include.user) {

@@ -31,16 +31,6 @@ export default function DashboardSidebar({ user }: DashboardSidebarProps) {
       href: '/dashboard/usage',
       icon: BarChart2
     },
-    {
-      name: t.sidebar.logs,
-      href: '/dashboard/logs',
-      icon: FileText
-    },
-    {
-      name: t.sidebar.settings,
-      href: '/dashboard/settings',
-      icon: Settings
-    }
   ];
   
   return (

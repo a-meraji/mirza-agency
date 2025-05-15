@@ -6,7 +6,7 @@ import { connectToDatabase } from "@/lib/db";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
     // Ensure DB connection is established
@@ -27,7 +27,7 @@ export async function GET(
     }
 
     const userId = session.user.id;
-    const conversationId = params.id;
+    const conversationId = context.params.id;
     
     // Get the conversation
     const conversation = await db.conversation.findById({

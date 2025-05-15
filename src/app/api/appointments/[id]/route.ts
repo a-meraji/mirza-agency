@@ -17,14 +17,14 @@ function handleApiError(error: any, operation: string) {
 // GET a specific appointment by ID
 export async function GET(
   req: NextRequest, 
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
     // Ensure database connection is established
     await connectToDatabase();
     
     // Extract the ID parameter
-    const id = params.id;
+    const id = context.params.id;
     
     if (!id) {
       return NextResponse.json({ error: "Appointment ID is required" }, { status: 400 });
@@ -53,14 +53,14 @@ export async function GET(
 // PUT to update an appointment (admin only)
 export async function PUT(
   req: NextRequest, 
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
     // Ensure database connection is established
     await connectToDatabase();
     
     // Extract the ID parameter
-    const id = params.id;
+    const id = context.params.id;
     
     if (!id) {
       return NextResponse.json({ error: "Appointment ID is required" }, { status: 400 });
@@ -109,14 +109,14 @@ export async function PUT(
 // DELETE an appointment (admin only)
 export async function DELETE(
   req: NextRequest, 
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
     // Ensure database connection is established
     await connectToDatabase();
     
     // Extract the ID parameter
-    const id = params.id;
+    const id = context.params.id;
     
     if (!id) {
       return NextResponse.json({ error: "Appointment ID is required" }, { status: 400 });

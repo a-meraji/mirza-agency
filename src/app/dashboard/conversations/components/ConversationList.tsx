@@ -6,12 +6,16 @@ interface ConversationListProps {
   conversations: Conversation[];
   hasFaSubdomain: boolean;
   totalCount: number;
+  expandedConversation: Conversation | null;
+  toggleConversation: (conversation: Conversation) => void;
 }
 
 export default function ConversationList({ 
   conversations = [], 
   hasFaSubdomain, 
-  totalCount 
+  totalCount,
+  expandedConversation,
+  toggleConversation
 }: ConversationListProps) {
   // Ensure conversations is always an array
   const conversationsList = Array.isArray(conversations) ? conversations : [];
@@ -41,6 +45,8 @@ export default function ConversationList({
           key={conversation.id}
           conversation={conversation}
           hasFaSubdomain={hasFaSubdomain}
+          isExpanded={expandedConversation?.id === conversation.id}
+          onClick={() => toggleConversation(conversation)}
         />
       ))}
     </div>

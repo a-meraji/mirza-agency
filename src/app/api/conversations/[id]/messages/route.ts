@@ -3,7 +3,7 @@ import { getServerSession } from 'next-auth';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
     // Get the authenticated user session
@@ -17,7 +17,7 @@ export async function GET(
     const userId = session.user.id;
     
     // Get the conversation ID from the URL params
-    const conversationId = params.id;
+    const conversationId = context.params.id;
     
     // Verify this conversation belongs to the user
     const ownsConversation = await verifyConversationOwnership(conversationId, userId);
@@ -31,7 +31,7 @@ export async function GET(
     
     return NextResponse.json(messages);
   } catch (error) {
-    console.error(`Error fetching messages for conversation ${params.id}:`, error);
+    console.error(`Error fetching messages for conversation ${context.params.id}:`, error);
     return NextResponse.json(
       { error: 'Failed to fetch conversation messages' },
       { status: 500 }

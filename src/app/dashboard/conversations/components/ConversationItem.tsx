@@ -1,14 +1,20 @@
-import Link from 'next/link';
-import { Clock, MessageCircle } from 'lucide-react';
+import { ChevronDown, ChevronRight, Clock, MessageCircle } from 'lucide-react';
 import { Conversation } from '../models/types';
 import { formatTimeAgo } from '../controllers/conversationController';
 
 interface ConversationItemProps {
   conversation: Conversation;
   hasFaSubdomain: boolean;
+  isExpanded: boolean;
+  onClick: () => void;
 }
 
-export default function ConversationItem({ conversation, hasFaSubdomain }: ConversationItemProps) {
+export default function ConversationItem({ 
+  conversation, 
+  hasFaSubdomain, 
+  isExpanded, 
+  onClick 
+}: ConversationItemProps) {
   // Format date
   const date = new Date(conversation.createdAt);
   const formattedDate = date.toLocaleDateString(hasFaSubdomain ? 'fa-IR' : undefined);
@@ -21,9 +27,9 @@ export default function ConversationItem({ conversation, hasFaSubdomain }: Conve
   const timeAgo = formatTimeAgo(date, hasFaSubdomain);
   
   return (
-    <Link
-      href={`/dashboard/conversations/${conversation.id}`}
-      className="block hover:bg-gray-50 transition-colors"
+    <div
+      onClick={onClick}
+      className={`cursor-pointer hover:bg-gray-50 transition-colors ${isExpanded ? 'bg-gray-50' : ''}`}
     >
       <div className="p-6">
         <div className="flex items-center justify-between">
@@ -33,9 +39,15 @@ export default function ConversationItem({ conversation, hasFaSubdomain }: Conve
                 <MessageCircle className="h-5 w-5" />
               </div>
               
-              <div>
-                <h2 className="text-lg font-medium text-gray-900 truncate">
+              <div className="ml-3">
+                <h2 className="text-lg font-medium text-gray-900 truncate flex items-center">
                   {conversation.conversationId.substring(0, 8)}...
+                  <span className="ml-2">
+                    {isExpanded ? 
+                      <ChevronDown className="h-4 w-4 text-gray-500" /> : 
+                      <ChevronRight className="h-4 w-4 text-gray-500" />
+                    }
+                  </span>
                 </h2>
                 <div className="mt-1 flex items-center text-sm text-gray-500">
                   <Clock className={`flex-shrink-0 ${hasFaSubdomain ? 'ml-1.5' : 'mr-1.5'} h-4 w-4 text-gray-400`} />
@@ -54,11 +66,13 @@ export default function ConversationItem({ conversation, hasFaSubdomain }: Conve
               </span>
             )}
             <span className="inline-flex items-center px-3 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-iconic">
-              {hasFaSubdomain ? 'مشاهده' : 'View'}
+              {isExpanded 
+                ? (hasFaSubdomain ? 'بستن' : 'Collapse') 
+                : (hasFaSubdomain ? 'مشاهده' : 'View')}
             </span>
           </div>
         </div>
       </div>
-    </Link>
+    </div>
   );
 } 
