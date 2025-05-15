@@ -90,7 +90,7 @@ export default function DashboardPage() {
         const conversationsData = await conversationsRes.json();
         const messagesData = await messagesRes.json();
         const usageDataResponse = await usageDataRes.json();
-        
+        console.log("fetched data: ", conversationsData, messagesData, usageDataResponse)
         // Extract data from the responses which now have structured formats
         const conversationsCount = conversationsData.total || conversationsData.conversations?.length || 0;
         const messagesCount = messagesData.total || messagesData.messages?.length || 0;

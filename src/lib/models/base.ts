@@ -1,5 +1,4 @@
 import mongoose, { Document, Model, Schema } from 'mongoose';
-import { connectToDatabase } from '../db';
 import { DatabaseService } from '../services/database';
 
 /**
@@ -34,8 +33,7 @@ export interface CreateOptions<T> {
  * Common interface for update options
  */
 export interface UpdateOptions<T> {
-  id?: string;
-  where?: { id: string };
+  id: string;
   data: Partial<T>;
 }
 
@@ -43,133 +41,108 @@ export interface UpdateOptions<T> {
  * Common interface for delete options
  */
 export interface DeleteOptions {
-  id?: string;
-  where?: { id: string };
+  id: string;
 }
 
 /**
- * Base model class that provides common functionality for all models
+ * Base model class with common CRUD operations
  */
 export abstract class BaseModel<T extends Document> {
   protected model: Model<T>;
   protected modelName: string;
-  protected schema: Schema<T>;
-
-  constructor(modelName: string, schema: Schema<T>) {
+  
+  constructor(modelName: string, schema: Schema) {
     this.modelName = modelName;
-    this.schema = schema;
     
-    // Initialize the model
-    this.model = this.getModel();
+    // Check if model already exists to prevent overwrite warnings
+    this.model = mongoose.models[modelName] as Model<T> || 
+      mongoose.model<T>(modelName, schema);
   }
-
+  
   /**
-   * Get or create the Mongoose model
-   */
-  protected getModel(): Model<T> {
-    return (mongoose.models[this.modelName] as Model<T>) || 
-           mongoose.model<T>(this.modelName, this.schema);
-  }
-
-  /**
-   * Ensure database connection before any operation
+   * Ensure database connection is established
    */
   protected async ensureConnection() {
-    // Use the simplified database connection utility
-    await connectToDatabase();
-    
-    // Make sure model is initialized
-    if (!this.model) {
-      this.model = this.getModel();
-    }
+    await DatabaseService.ensureConnection();
   }
-
+  
   /**
-   * Format document to include string ID
+   * Format a document for output
    */
-  protected formatDocument(doc: any): any {
+  protected formatDocument(doc: any) {
     if (!doc) return null;
     
-    const formatted = doc._doc ? { ...doc._doc } : { ...doc };
+    // Convert _id to id
+    const formatted = { ...doc };
     
-    // Convert _id to string id
     if (formatted._id) {
       formatted.id = formatted._id.toString();
+      delete formatted._id;
+    }
+    
+    // Handle nested documents
+    for (const [key, value] of Object.entries(formatted)) {
+      if (value && typeof value === 'object' && '_id' in value) {
+        formatted[key] = this.formatDocument(value);
+      }
     }
     
     return formatted;
   }
-
+  
   /**
-   * Handle errors consistently
+   * Handle errors in model operations
    */
-  protected handleError(error: any, operation: string): never {
+  protected handleError(error: unknown, operation: string) {
     console.error(`Error in ${this.modelName}.${operation}:`, error);
-    
-    if (error instanceof mongoose.Error.ValidationError) {
-      throw new Error(`Validation error in ${this.modelName}: ${error.message}`);
-    }
-    
-    if (error instanceof mongoose.Error.CastError) {
-      throw new Error(`Invalid ID format for ${this.modelName}`);
-    }
-    
     throw error;
   }
   
   /**
-   * Find many documents
+   * Find multiple documents with optional filtering and sorting
    */
   async findMany(options: QueryOptions = {}) {
     try {
       await this.ensureConnection();
       
       return await DatabaseService.executeWithRetry(async () => {
-        const { where = {}, include = {}, skip = 0, limit = 100, orderBy, sort, select } = options;
+        const { where = {}, orderBy = {}, limit, skip, include = {} } = options;
         
-        // Build the query
+        // Build query
         let query = this.model.find(where);
         
-        // Handle pagination
+        // Handle includes/population
+        for (const [key, value] of Object.entries(include)) {
+          if (value) {
+            query = query.populate(key);
+          }
+        }
+        
+        // Apply sorting
+        const sort: Record<string, 1 | -1> = {};
+        if (orderBy) {
+          if (Array.isArray(orderBy)) {
+            orderBy.forEach(order => {
+              for (const [key, value] of Object.entries(order)) {
+                sort[key] = value === 'asc' ? 1 : -1;
+              }
+            });
+          } else {
+            for (const [key, value] of Object.entries(orderBy)) {
+              sort[key] = value === 'asc' ? 1 : -1;
+            }
+          }
+          query = query.sort(sort);
+        }
+        
+        // Apply pagination
         if (skip) query = query.skip(skip);
         if (limit) query = query.limit(limit);
         
-        // Handle sorting
-        if (sort) {
-          query = query.sort(sort);
-        } else if (orderBy) {
-          const sortCriteria: Record<string, number> = {};
-          
-          if (Array.isArray(orderBy)) {
-            orderBy.forEach(criteria => {
-              Object.entries(criteria).forEach(([field, direction]) => {
-                sortCriteria[field] = direction === 'asc' ? 1 : -1;
-              });
-            });
-          } else {
-            Object.entries(orderBy).forEach(([field, direction]) => {
-              sortCriteria[field] = direction === 'asc' ? 1 : -1;
-            });
-          }
-          
-          query = query.sort(sortCriteria);
-        }
-        
-        // Handle includes/population
-        Object.entries(include).forEach(([field, shouldInclude]) => {
-          if (shouldInclude) {
-            query = query.populate(field);
-          }
-        });
-        
-        // Handle field selection
-        if (select) {
-          query = query.select(select);
-        }
-        
+        // Execute query
         const results = await query.lean();
         
-        // Format the results
+        // Format results
         return results.map(doc => this.formatDocument(doc));
       });
     } catch (error) {
@@ -178,7 +151,22 @@ export abstract class BaseModel<T extends Document> {
   }
   
   /**
-   * Find a single document
+   * Count documents matching a filter
+   */
+  async count(filter: Record<string, any> = {}) {
+    try {
+      await this.ensureConnection();
+      
+      return await DatabaseService.executeWithRetry(async () => {
+        return await this.model.countDocuments(filter);
+      });
+    } catch (error) {
+      return this.handleError(error, 'count');
+    }
+  }
+
+  /**
+   * Find a single document by criteria
    */
   async findOne(options: QueryOptions = {}) {
     try {
@@ -187,40 +175,24 @@ export abstract class BaseModel<T extends Document> {
       return await DatabaseService.executeWithRetry(async () => {
         const { where = {}, include = {} } = options;
         
-        // Build the query
+        // Build query
         let query = this.model.findOne(where);
         
         // Handle includes/population
-        Object.entries(include).forEach(([field, shouldInclude]) => {
-          if (shouldInclude) {
-            query = query.populate(field);
+        for (const [key, value] of Object.entries(include)) {
+          if (value) {
+            query = query.populate(key);
           }
-        });
+        }
         
         const doc = await query.lean();
         
         if (!doc) return null;
         
-        // Format the document
         return this.formatDocument(doc);
       });
     } catch (error) {
       return this.handleError(error, 'findOne');
-    }
-  }
-  
-  /**
-   * Count documents
-   */
-  async count(where: Record<string, any> = {}) {
-    try {
-      await this.ensureConnection();
-      
-      return await DatabaseService.executeWithRetry(async () => {
-        return await this.model.countDocuments(where);
-      });
-    } catch (error) {
-      return this.handleError(error, 'count');
     }
   }
 } 

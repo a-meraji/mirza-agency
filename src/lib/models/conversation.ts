@@ -23,7 +23,7 @@ export class ConversationModel extends BaseModel<ConversationDocument> {
       {
         user: { type: Schema.Types.ObjectId, ref: 'User', required: true, index: true },
         ragSystem: { type: Schema.Types.ObjectId, ref: 'RagSystem', required: true, index: true },
-        conversationId: { type: String, required: true },
+        conversationId: { type: String, required: true, unique: true },
       },
       {
         timestamps: true, // Automatically add createdAt and updatedAt fields
