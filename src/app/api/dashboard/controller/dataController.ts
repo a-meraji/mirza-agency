@@ -58,11 +58,11 @@ export class DataController {
         console.log(`Conversation with ID ${conversationId} already exists, reusing it`);
       }
 
+      console.log("conversation",conversation.id, conversation);
       // 3. Calculate token counts for each message and total usage
       const messagesWithTokens = messages.map(message => {
         // Calculate token count for this message
         const calculatedTokens = estimateTokenCount(message.text);
-        
         return {
           conversation: conversation.id,
           executionId: message.executionId,
