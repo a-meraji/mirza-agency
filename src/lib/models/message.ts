@@ -1,11 +1,10 @@
 import mongoose, { Document, Schema } from 'mongoose';
 import { BaseModel, QueryOptions, FindByIdOptions, CreateOptions, UpdateOptions, DeleteOptions } from './base';
 import { DatabaseService } from '../services/database';
-import { ConversationDocument } from './conversation';
 
 // Define the interface for the document
 export interface MessageDocument extends Document {
-  conversation: mongoose.Types.ObjectId | string | ConversationDocument;
+  conversation: mongoose.Types.ObjectId | string;
   executionId: string;
   role: 'user' | 'assistant';
   text: string;
