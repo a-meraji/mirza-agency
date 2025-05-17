@@ -17,13 +17,25 @@ interface UsageItem {
   cost: number;
 }
 
+interface PaymentItem {
+  id: string;
+  createdAt: string;
+  amount: number;
+  description: string;
+  currency: 'rial' | 'dollar';
+}
+
 interface DashboardData {
   conversations: number;
   messages: number;
   usageData: UsageItem[];
+  paymentData: PaymentItem[];
   totalInputTokens: number;
   totalOutputTokens: number;
   totalCost: number;
+  totalPayments: number;
+  balanceRemaining: number;
+  preferredCurrency: 'rial' | 'dollar';
   loading: boolean;
   error: string | null;
 }
@@ -37,9 +49,13 @@ export default function DashboardPage() {
     conversations: 0,
     messages: 0,
     usageData: [],
+    paymentData: [],
     totalInputTokens: 0,
     totalOutputTokens: 0,
     totalCost: 0,
+    totalPayments: 0,
+    balanceRemaining: 0,
+    preferredCurrency: 'dollar',
     loading: true,
     error: null
   });
@@ -59,7 +75,7 @@ export default function DashboardPage() {
         const token = sessionData?.token;
         
         // Fetch user data in parallel
-        const [conversationsRes, messagesRes, usageDataRes] = await Promise.all([
+        const [conversationsRes, messagesRes, usageDataRes, paymentsRes] = await Promise.all([
           fetch('/api/dashboard/conversations', {
             credentials: 'include',
             headers: {
@@ -80,34 +96,76 @@ export default function DashboardPage() {
               'Content-Type': 'application/json',
               'Authorization': `Bearer ${token}`
             },
+          }),
+          fetch('/api/dashboard/payments', {
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
           })
         ]);
         
-        if (!conversationsRes.ok || !messagesRes.ok || !usageDataRes.ok) {
+        if (!conversationsRes.ok || !messagesRes.ok || !usageDataRes.ok || !paymentsRes.ok) {
           throw new Error('Failed to fetch dashboard data');
         }
         
         const conversationsData = await conversationsRes.json();
         const messagesData = await messagesRes.json();
         const usageDataResponse = await usageDataRes.json();
-        console.log("fetched data: ", conversationsData, messagesData, usageDataResponse)
+        const paymentsData = await paymentsRes.json();
+        console.log("fetched data: ", conversationsData, messagesData, usageDataResponse, paymentsData)
+        
         // Extract data from the responses which now have structured formats
         const conversationsCount = conversationsData.total || conversationsData.conversations?.length || 0;
         const messagesCount = messagesData.total || messagesData.messages?.length || 0;
         const usageData = usageDataResponse.usageData || [];
+        const payments = paymentsData.payments || [];
         
         // Calculate usage totals
         const totalInputTokens = usageData.reduce((sum: number, item: UsageItem) => sum + (item.inputTokens || 0), 0);
         const totalOutputTokens = usageData.reduce((sum: number, item: UsageItem) => sum + (item.outputTokens || 0), 0);
         const totalCost = usageData.reduce((sum: number, item: UsageItem) => sum + (item.cost || 0), 0);
         
+        // Get conversion rate from environment variables
+        const rialToDollarRate = Number(process.env.NEXT_PUBLIC_RIAL_TO_DOLLAR_RATE) || 50000;
+        
+        // Calculate payment totals, converting all to dollar for calculation
+        let totalPaymentsDollar = 0;
+        for (const payment of payments) {
+          if (payment.currency === 'rial') {
+            totalPaymentsDollar += (payment.amount / rialToDollarRate);
+          } else {
+            totalPaymentsDollar += payment.amount;
+          }
+        }
+        
+        // Determine preferred currency based on most recent payment
+        const mostRecentPayment = payments.sort((a, b) => 
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        )[0];
+        
+        const preferredCurrency = mostRecentPayment?.currency || 'dollar';
+        
+        // Calculate balance remaining in the preferred currency
+        let balanceRemaining = 0;
+        if (preferredCurrency === 'rial') {
+          balanceRemaining = (totalPaymentsDollar - totalCost) * rialToDollarRate;
+        } else {
+          balanceRemaining = totalPaymentsDollar - totalCost;
+        }
+        
         setDashboardData({
           conversations: conversationsCount,
           messages: messagesCount,
           usageData,
+          paymentData: payments,
           totalInputTokens,
           totalOutputTokens,
           totalCost,
+          totalPayments: totalPaymentsDollar,
+          balanceRemaining,
+          preferredCurrency,
           loading: false,
           error: null
         });
@@ -176,11 +234,13 @@ export default function DashboardPage() {
           href="/dashboard/usage"
         />
         <DashboardCard 
-          title={t.dashboard.usageCost}
-          value={`$${dashboardData.totalCost.toFixed(2)}`}
+          title={"Balance Remaining"}
+          value={dashboardData.preferredCurrency === 'rial' 
+            ? `${Math.floor(dashboardData.balanceRemaining).toLocaleString()} ریال` 
+            : `$${dashboardData.balanceRemaining.toFixed(2)}`}
           icon={BarChart2}
           color="amber"
-          href="/dashboard/usage"
+          href="/dashboard/payments"
         />
       </div>
       

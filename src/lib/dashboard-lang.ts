@@ -53,6 +53,7 @@ export const dashboardTextEn = {
     type: "Type",
     tokens: "Tokens",
     cost: "Cost",
+    balanceRemaining: "Balance Remaining",
   },
   
   // Sidebar
@@ -60,9 +61,37 @@ export const dashboardTextEn = {
     dashboard: "Dashboard",
     conversations: "Conversations",
     usageAnalytics: "Usage & Analytics",
+    payments: "Payments",
     logs: "Logs",
     settings: "Settings",
     signOut: "Sign Out",
+  },
+  
+  // Payments
+  payments: {
+    title: "Payments",
+    history: "Payment History",
+    noPayments: "No payment history found",
+    addPayment: "Add Payment",
+    paymentDate: "Payment Date",
+    amount: "Amount",
+    description: "Description",
+    status: "Status",
+    paymentMethod: "Payment Method",
+    calculator: "Price Calculator",
+    calculatorDescription: "Estimate your monthly cost based on your expected usage",
+    aiMessages: "AI Messages",
+    kbWords: "Knowledge Base Words",
+    fileLimitMB: "File Limit (MB)",
+    knowledgeBases: "Knowledge Bases",
+    websiteUploads: "Website Uploads",
+    kbUploads: "KB Uploads",
+    wpPages: "WordPress Pages",
+    estimatedMonthlyPrice: "Estimated Monthly Price",
+    perMonth: "per month",
+    calculate: "Calculate",
+    rial: "Rial",
+    dollar: "Dollar",
   },
   
   // Header
@@ -137,6 +166,7 @@ export const dashboardTextFa = {
     type: "نوع",
     tokens: "توکن‌ها",
     cost: "هزینه",
+    balanceRemaining: "اعتبار باقیمانده",
   },
   
   // Sidebar
@@ -144,9 +174,37 @@ export const dashboardTextFa = {
     dashboard: "داشبورد",
     conversations: "مکالمات",
     usageAnalytics: "استفاده و تحلیل‌ها",
+    payments: "پرداخت‌ها",
     logs: "گزارش‌ها",
     settings: "تنظیمات",
     signOut: "خروج",
+  },
+  
+  // Payments
+  payments: {
+    title: "پرداخت‌ها",
+    history: "تاریخچه پرداخت",
+    noPayments: "تاریخچه پرداختی یافت نشد",
+    addPayment: "افزودن پرداخت",
+    paymentDate: "تاریخ پرداخت",
+    amount: "مبلغ",
+    description: "توضیحات",
+    status: "وضعیت",
+    paymentMethod: "روش پرداخت",
+    calculator: "ماشین حساب قیمت",
+    calculatorDescription: "تخمین هزینه ماهانه بر اساس استفاده مورد انتظار شما",
+    aiMessages: "پیام‌های هوش مصنوعی",
+    kbWords: "کلمات پایگاه دانش",
+    fileLimitMB: "محدودیت فایل (مگابایت)",
+    knowledgeBases: "پایگاه‌های دانش",
+    websiteUploads: "آپلودهای وب‌سایت",
+    kbUploads: "آپلودهای پایگاه دانش",
+    wpPages: "صفحات وردپرس",
+    estimatedMonthlyPrice: "قیمت تخمینی ماهانه",
+    perMonth: "در ماه",
+    calculate: "محاسبه",
+    rial: "ریال",
+    dollar: "دلار",
   },
   
   // Header

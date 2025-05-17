@@ -86,4 +86,22 @@ export interface UserFilter {
   status: string;
   ragSystemType: string;
   ragSystemStatus: string;
+}
+
+// Payment interface
+export interface Payment {
+  id: string;
+  user: string | { id: string; email: string; name?: string };
+  amount: number;
+  currency: 'dollar' | 'rial';
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Payment filter interface
+export interface PaymentFilter {
+  startDate: string;
+  endDate: string;
+  userId: string;
+  currency: string;
 } 

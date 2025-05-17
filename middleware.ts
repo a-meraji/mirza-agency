@@ -25,7 +25,12 @@ export function middleware(request: NextRequest) {
   }
   
   // For API routes that need admin protection
-  if (path.startsWith("/api/appointments") || path.startsWith("/api/bookings") || path.startsWith("/api/blogs")) {
+  if (
+    path.startsWith("/api/appointments") || 
+    path.startsWith("/api/bookings") || 
+    path.startsWith("/api/blogs") ||
+    path.startsWith("/api/admin/payments")
+  ) {
     // For GET requests to /api/appointments, we allow public access
     if (path === "/api/appointments" && request.method === "GET") {
       return NextResponse.next();
@@ -60,5 +65,11 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/api/appointments/:path*", "/api/bookings/:path*", "/api/blogs/:path*"],
+  matcher: [
+    "/admin/:path*", 
+    "/api/appointments/:path*", 
+    "/api/bookings/:path*", 
+    "/api/blogs/:path*",
+    "/api/admin/payments/:path*"
+  ],
 }; 

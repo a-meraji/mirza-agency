@@ -20,6 +20,14 @@ interface Usage {
   recordedAt: string;
 }
 
+interface PaymentItem {
+  id: string;
+  createdAt: string;
+  amount: number;
+  currency: 'rial' | 'dollar';
+  description: string;
+}
+
 interface UsageSummary {
   totalPromptTokens: number;
   totalCompletionTokens: number;
@@ -54,11 +62,17 @@ export default function UsagePage() {
   });
   const [recentUsage, setRecentUsage] = useState<Usage[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [balanceData, setBalanceData] = useState({
+    totalPayments: 0,
+    balanceRemaining: 0,
+    preferredCurrency: 'dollar' as 'rial' | 'dollar'
+  });
   
   // Fetch data
   useEffect(() => {
     if (status === 'authenticated') {
       fetchUsageData();
+      fetchPaymentData();
     }
   }, [status]);
   
@@ -119,14 +133,98 @@ export default function UsagePage() {
     }
   };
   
+  const fetchPaymentData = async () => {
+    try {
+      // Get session token
+      const sessionRes = await fetch('/api/auth/session');
+      const sessionData = await sessionRes.json();
+      const token = sessionData?.token;
+      
+      const paymentsRes = await fetch('/api/dashboard/payments', {
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+      });
+      
+      if (!paymentsRes.ok) {
+        throw new Error('Failed to fetch payments data');
+      }
+      
+      const paymentsData = await paymentsRes.json();
+      const payments = paymentsData.payments || [];
+      
+      // Get conversion rate from environment variables
+      const rialToDollarRate = Number(process.env.NEXT_PUBLIC_RIAL_TO_DOLLAR_RATE) || 50000;
+      
+      // Calculate payment totals, converting all to dollar for calculation
+      let totalPaymentsDollar = 0;
+      for (const payment of payments) {
+        if (payment.currency === 'rial') {
+          totalPaymentsDollar += (payment.amount / rialToDollarRate);
+        } else {
+          totalPaymentsDollar += payment.amount;
+        }
+      }
+      
+      // Determine preferred currency based on most recent payment
+      const mostRecentPayment = payments.sort((a: PaymentItem, b: PaymentItem) => 
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      )[0];
+      
+      const preferredCurrency = mostRecentPayment?.currency || 'dollar';
+      
+      setBalanceData({
+        totalPayments: totalPaymentsDollar,
+        balanceRemaining: 0, // Will calculate after usage data is fetched
+        preferredCurrency
+      });
+      
+    } catch (err) {
+      console.error('Error fetching payment data:', err);
+    }
+  };
+  
+  // Calculate balance remaining whenever usage summary or payment data changes
+  useEffect(() => {
+    const rialToDollarRate = Number(process.env.NEXT_PUBLIC_RIAL_TO_DOLLAR_RATE) || 50000;
+    let balanceRemaining = 0;
+    
+    if (balanceData.preferredCurrency === 'rial') {
+      balanceRemaining = (balanceData.totalPayments - usageSummary.totalCost) * rialToDollarRate;
+    } else {
+      balanceRemaining = balanceData.totalPayments - usageSummary.totalCost;
+    }
+    
+    setBalanceData(prev => ({
+      ...prev,
+      balanceRemaining
+    }));
+  }, [usageSummary.totalCost, balanceData.totalPayments, balanceData.preferredCurrency]);
+  
   // Format currency
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat(hasFaSubdomain ? 'fa-IR' : 'en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 4,
-      maximumFractionDigits: 4,
-    }).format(amount);
+    if (balanceData.preferredCurrency === 'rial') {
+      return new Intl.NumberFormat(hasFaSubdomain ? 'fa-IR' : 'en-US', {
+        style: 'currency',
+        currency: 'IRR',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }).format(amount);
+    } else {
+      return new Intl.NumberFormat(hasFaSubdomain ? 'fa-IR' : 'en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 4,
+        maximumFractionDigits: 4,
+      }).format(amount);
+    }
+  };
+
+  // Format raw number with thousands separator
+  const formatNumber = (num: number) => {
+    return new Intl.NumberFormat(hasFaSubdomain ? 'fa-IR' : 'en-US').format(Math.floor(num));
   };
   
   // Format date
@@ -171,18 +269,7 @@ export default function UsagePage() {
       
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Total Conversations */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-500">{hasFaSubdomain ? 'تعداد مکالمات' : 'Conversations'}</p>
-              <h2 className="text-3xl font-bold mt-1">{conversations.length.toLocaleString(hasFaSubdomain ? 'fa-IR' : 'en-US')}</h2>
-            </div>
-            <div className="p-3 bg-amber-50 rounded-full">
-              <FileText className="h-6 w-6 text-amber-500" />
-            </div>
-          </div>
-        </div>
+
         
         {/* Total Tokens */}
         <div className="bg-white rounded-lg shadow p-6">
@@ -215,11 +302,34 @@ export default function UsagePage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-500">{t.dashboard.usageCost}</p>
-              <h2 className="text-3xl font-bold mt-1">{formatCurrency(usageSummary.totalCost)}</h2>
+              <h2 className="text-3xl font-bold mt-1">
+                {balanceData.preferredCurrency === 'rial' 
+                  ? `${formatNumber(usageSummary.totalCost * (Number(process.env.NEXT_PUBLIC_RIAL_TO_DOLLAR_RATE) || 50000))} ریال`
+                  : formatCurrency(usageSummary.totalCost)}
+              </h2>
             </div>
             <div className="p-3 bg-green-50 rounded-full">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+          </div>
+        </div>
+        
+        {/* Balance Remaining */}
+        <div className="bg-white rounded-lg shadow p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-500">{hasFaSubdomain ? 'اعتبار باقیمانده' : 'Balance Remaining'}</p>
+              <h2 className="text-3xl font-bold mt-1">
+                {balanceData.preferredCurrency === 'rial' 
+                  ? `${formatNumber(balanceData.balanceRemaining)} ریال`
+                  : formatCurrency(balanceData.balanceRemaining)}
+              </h2>
+            </div>
+            <div className="p-3 bg-purple-50 rounded-full">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
               </svg>
             </div>
           </div>

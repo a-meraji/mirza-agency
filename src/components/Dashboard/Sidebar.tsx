@@ -2,7 +2,7 @@
 import { Session } from 'next-auth';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { BarChart2, MessageCircle, FileText, Settings, Home, LogOut } from 'lucide-react';
+import { BarChart2, MessageCircle, FileText, Settings, Home, LogOut, CreditCard } from 'lucide-react';
 import useSubdomain from '@/hooks/useSubdomain';
 import { dashboardTextEn, dashboardTextFa } from '@/lib/dashboard-lang';
 
@@ -30,6 +30,11 @@ export default function DashboardSidebar({ user }: DashboardSidebarProps) {
       name: t.sidebar.usageAnalytics,
       href: '/dashboard/usage',
       icon: BarChart2
+    },
+    {
+      name: t.sidebar.payments,
+      href: '/dashboard/payments',
+      icon: CreditCard
     },
   ];
   

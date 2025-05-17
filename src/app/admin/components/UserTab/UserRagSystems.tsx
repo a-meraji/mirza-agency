@@ -207,7 +207,7 @@ export default function UserRagSystems({ userId, userName }: UserRagSystemsProps
           کاربر هیچ سیستم RAG فعالی ندارد
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {ragSystems.map(system => (
             <Card key={system.id}>
               <CardHeader className="pb-2">

@@ -6,6 +6,7 @@ import AppointmentTab from "./components/AppointmentTab/AppointmentTab";
 import BookingTab from "./components/BookingTab/BookingTab";
 import BlogTab from "./components/BlogTab/BlogTab";
 import UserTab from "./components/UserTab/UserTab";
+import PaymentTab from "./components/PaymentTab/PaymentTab";
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("appointments");
@@ -20,6 +21,7 @@ export default function AdminDashboard() {
           <TabsTrigger value="bookings">رزروهای ثبت شده</TabsTrigger>
           <TabsTrigger value="blogs">مدیریت وبلاگ</TabsTrigger>
           <TabsTrigger value="users">مدیریت کاربران</TabsTrigger>
+          <TabsTrigger value="payments">مدیریت پرداخت‌ها</TabsTrigger>
         </TabsList>
         
         <TabsContent value="appointments">
@@ -36,6 +38,10 @@ export default function AdminDashboard() {
         
         <TabsContent value="users">
           <UserTab />
+        </TabsContent>
+        
+        <TabsContent value="payments">
+          <PaymentTab />
         </TabsContent>
       </Tabs>
     </div>

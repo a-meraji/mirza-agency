@@ -7,6 +7,7 @@ import { conversationModel } from './conversation';
 import { messageModel } from './message';
 import { usageModel } from './usage';
 import { logModel } from './log';
+import { paymentModel } from './payment';
 import { DatabaseService } from '../services/database';
 
 /**
@@ -26,6 +27,7 @@ export const db = {
   message: messageModel,
   usage: usageModel,
   log: logModel,
+  payment: paymentModel,
   
   // Transaction support
   $transaction: async (operations: Promise<any>[]) => {
@@ -50,7 +52,8 @@ export {
   conversationModel,
   messageModel,
   usageModel,
-  logModel
+  logModel,
+  paymentModel
 };
 
 // Default export with named variable
@@ -67,6 +70,7 @@ const models = {
   messageModel,
   usageModel,
   logModel,
+  paymentModel,
   
   // Database client
   db
