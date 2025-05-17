@@ -1,6 +1,6 @@
-import { conversationModel, ConversationDocument } from '@/lib/models/conversation';
-import { messageModel, MessageDocument } from '@/lib/models/message';
-import { usageModel, UsageDocument } from '@/lib/models/usage';
+import { conversationModel } from '@/lib/models/conversation';
+import { messageModel } from '@/lib/models/message';
+import { usageModel } from '@/lib/models/usage';
 import { calculateTokensAndCost, estimateTokenCount } from '@/lib/utils/tokenUtils';
 
 type CreateMessageInput = {

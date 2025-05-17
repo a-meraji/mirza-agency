@@ -1,27 +1,29 @@
 'use client';
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { calculatePrice, defaultRates, PricingInputs, pricingPlans } from "@/lib/pricingCalculator";
 import useSubdomain from "@/hooks/useSubdomain";
 import { dashboardTextEn, dashboardTextFa } from "@/lib/dashboard-lang";
-import { TrendingUp, Check, Zap } from "lucide-react";
+import { TrendingUp, Check, Zap, MessageCircle, Database } from "lucide-react";
 
 const PricingCalculator: React.FC = () => {
   const { hasFaSubdomain } = useSubdomain();
   const t = hasFaSubdomain ? dashboardTextFa : dashboardTextEn;
   
   const [inputs, setInputs] = useState<PricingInputs>({
-    aiMessages: 0,
-    kbWords: 0,
-    fileLimitMB: 0,
-    knowledgeBases: 0,
-    websiteUploads: 0,
-    kbUploads: 0,
-    wpPages: 0,
+    aiMessages: 10000,
+    kbWords: 10,
+    fileLimitMB: 5,
+    wpPages: 200,
   });
   
-  const [currency, setCurrency] = useState<'rial' | 'dollar'>('rial');
+  const [currency, setCurrency] = useState<'rial' | 'dollar'>(hasFaSubdomain ? 'rial' : 'dollar');
   const [activeTab, setActiveTab] = useState<'calculator' | 'plans'>('plans');
+  
+  // Update currency based on subdomain
+  useEffect(() => {
+    setCurrency(hasFaSubdomain ? 'rial' : 'dollar');
+  }, [hasFaSubdomain]);
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -38,34 +40,28 @@ const PricingCalculator: React.FC = () => {
       return new Intl.NumberFormat(hasFaSubdomain ? 'fa-IR' : 'en-US').format(amount);
     } else {
       return new Intl.NumberFormat(hasFaSubdomain ? 'fa-IR' : 'en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
       }).format(amount);
     }
   };
   
-  const inputLabels: { [key in keyof PricingInputs]: string } = {
-    aiMessages: t.payments.aiMessages,
-    kbWords: t.payments.kbWords,
-    fileLimitMB: t.payments.fileLimitMB,
-    knowledgeBases: t.payments.knowledgeBases,
-    websiteUploads: t.payments.websiteUploads,
-    kbUploads: t.payments.kbUploads,
-    wpPages: t.payments.wpPages,
-  };
-  
-  const featureLabels: { [key in keyof PricingInputs]: string } = {
-    aiMessages: hasFaSubdomain ? 'تعداد پیام‌ها' : 'Number of Messages',
-    kbWords: hasFaSubdomain ? 'میلیون کلمه ذخیره‌شده' : 'Million Words Stored',
-    fileLimitMB: hasFaSubdomain ? 'حجم آپلود فایل (MB)' : 'File Upload Size (MB)',
-    knowledgeBases: hasFaSubdomain ? 'تعداد پایگاه دانش' : 'Number of Knowledge Bases',
-    websiteUploads: hasFaSubdomain ? 'تعداد بارگذاری وب' : 'Website Uploads',
-    kbUploads: hasFaSubdomain ? 'تعداد آپلود فایل' : 'File Uploads',
-    wpPages: hasFaSubdomain ? 'تعداد صفحات وردپرس' : 'WordPress Pages',
-  };
-  
-  const inputClass = `w-full p-3 border border-gray-300 rounded-lg text-right text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all bg-white`;
-  
+  // Only use message count and KB words for the calculator
+  const calculatorInputs = [
+    {
+      name: 'aiMessages',
+      label: t.payments.aiMessages,
+      icon: <MessageCircle className="h-5 w-5 text-amber-500" />,
+      placeholder: hasFaSubdomain ? 'تعداد پیام‌ها' : 'Number of messages',
+    },
+    {
+      name: 'kbWords',
+      label: t.payments.kbWords,
+      icon: <Database className="h-5 w-5 text-amber-500" />,
+      placeholder: hasFaSubdomain ? 'میلیون کلمه ذخیره‌شده' : 'Million words indexed',
+    }
+  ];
+
   return (
     <div dir={hasFaSubdomain ? 'rtl' : 'ltr'} className={`bg-white rounded-lg shadow-md overflow-hidden ${hasFaSubdomain ? 'font-iransans' : 'robot'}`}>
       <div className="p-6 bg-amber-50 border-b border-amber-100">
@@ -132,19 +128,21 @@ const PricingCalculator: React.FC = () => {
             </div>
           </div>
         
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {Object.keys(inputs).map((key) => (
-              <div key={key} className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">
-                  {inputLabels[key as keyof PricingInputs]}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {calculatorInputs.map((input) => (
+              <div key={input.name} className="space-y-2">
+                <label className="block text-sm font-medium text-gray-700 flex items-center">
+                  <span className={`${hasFaSubdomain ? 'ml-2' : 'mr-2'}`}>{input.icon}</span>
+                  {input.label}
                 </label>
                 <input
                   type="number"
-                  name={key}
-                  className={inputClass}
-                  value={inputs[key as keyof PricingInputs]}
+                  name={input.name}
+                  className="w-full p-3 border border-gray-300 rounded-lg text-right text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all bg-white"
+                  value={inputs[input.name as keyof PricingInputs]}
                   onChange={handleChange}
                   min="0"
+                  placeholder={input.placeholder}
                 />
               </div>
             ))}
@@ -158,7 +156,7 @@ const PricingCalculator: React.FC = () => {
                   {formatCurrency(total)}
                 </span>
                 <span className="ml-2 text-gray-500">
-                  {currency === 'rial' ? 'ریال' : '$'} 
+                  {currency === 'rial' ? 'تومان' : '$'} 
                   <span className="text-sm ml-1">{t.payments.perMonth}</span>
                 </span>
               </div>
@@ -169,7 +167,7 @@ const PricingCalculator: React.FC = () => {
         <div className="p-6">
           {/* Currency Toggle */}
           <div className="mb-6 flex justify-end">
-            <div className="inline-flex items-center rounded-md shadow-sm" role="group">
+            <div dir="ltr" className="inline-flex items-center rounded-md shadow-sm" role="group">
               <button
                 type="button"
                 onClick={() => setCurrency('rial')}
@@ -198,9 +196,7 @@ const PricingCalculator: React.FC = () => {
           {/* Pricing Plans */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {pricingPlans.map((plan, index) => {
-              const planPrice = currency === 'dollar' 
-                ? plan.monthlyPrice / (Number(process.env.NEXT_PUBLIC_RIAL_TO_DOLLAR_RATE) || 50000) 
-                : plan.monthlyPrice;
+              const planPrice = currency === 'dollar' ? plan.monthlyPriceDollar : plan.monthlyPrice;
                 
               return (
                 <div 
@@ -218,25 +214,56 @@ const PricingCalculator: React.FC = () => {
                         {formatCurrency(planPrice)}
                       </span>
                       <span className="ml-1 text-sm text-gray-500">
-                        {currency === 'rial' ? 'ریال' : '$'} / {t.payments.perMonth}
+                        {currency === 'rial' ? 'تومان' : '$'} / {t.payments.perMonth}
                       </span>
                     </div>
                   </div>
                   
                   <div className="p-6 border-t border-gray-200 space-y-4">
-                    {Object.keys(plan.features).map((key) => (
-                      <div key={key} className="flex items-start">
-                        <div className={`flex-shrink-0 ${hasFaSubdomain ? 'ml-2' : 'mr-2'}`}>
-                          <Check className="h-5 w-5 text-green-500" />
-                        </div>
-                        <span className="text-sm text-gray-600">
-                          <span className="font-medium">
-                            {plan.features[key as keyof typeof plan.features].toLocaleString()}
-                          </span>{' '}
-                          {featureLabels[key as keyof PricingInputs]}
-                        </span>
+                    {/* Message Count */}
+                    <div className="flex items-start">
+                      <div className={`flex-shrink-0 ${hasFaSubdomain ? 'ml-2' : 'mr-2'}`}>
+                        <MessageCircle className="h-5 w-5 text-green-500" />
                       </div>
-                    ))}
+                      <span className="text-sm text-gray-600">
+                        <span className="font-medium">
+                          {plan.features.aiMessages.toLocaleString()}
+                        </span>{' '}
+                        {hasFaSubdomain ? 'توکن' : 'tokens'}
+                      </span>
+                    </div>
+                    
+                    {/* Words Indexed */}
+                    <div className="flex items-start">
+                      <div className={`flex-shrink-0 ${hasFaSubdomain ? 'ml-2' : 'mr-2'}`}>
+                        <Database className="h-5 w-5 text-green-500" />
+                      </div>
+                      <span className="text-sm text-gray-600">
+                        {hasFaSubdomain 
+                          ? `تا ${plan.features.kbWords} میلیون کلمه ذخیره‌شده` 
+                          : `Up to ${plan.features.kbWords}M words indexed`}
+                      </span>
+                    </div>
+                    
+                    {/* Support Level */}
+                    <div className="flex items-start">
+                      <div className={`flex-shrink-0 ${hasFaSubdomain ? 'ml-2' : 'mr-2'}`}>
+                        <Check className="h-5 w-5 text-green-500" />
+                      </div>
+                      <span className="text-sm text-gray-600">
+                        {hasFaSubdomain ? plan.features.support : plan.features.supportEn}
+                      </span>
+                    </div>
+                    
+                    {/* API Access */}
+                    <div className="flex items-start">
+                      <div className={`flex-shrink-0 ${hasFaSubdomain ? 'ml-2' : 'mr-2'}`}>
+                        <Check className="h-5 w-5 text-green-500" />
+                      </div>
+                      <span className="text-sm text-gray-600">
+                        {hasFaSubdomain ? plan.features.apiAccess : plan.features.apiAccessEn}
+                      </span>
+                    </div>
                   </div>
                 </div>
               );
